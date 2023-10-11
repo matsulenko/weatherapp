@@ -257,7 +257,7 @@ final class WeatherMainInfoView: UIView {
     }
     
     private func updateLabels(currentWeather: WeatherForecastCurrent) {
-        updateTime.text = timeFormatLong(currentWeather.updateTimeString)
+        updateTime.text = timeFormatLong(currentWeather.updateTimeString).lowercased()
         currentTemp.text = doubleToTemperature(temperatureFormat(currentWeather.temperature))
         currentConditions.text = currentWeather.currentConditions
         currentPrecipitationLevel.text = doubleToString(currentWeather.precipitationIntensity)
