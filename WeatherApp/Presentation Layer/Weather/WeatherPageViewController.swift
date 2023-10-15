@@ -50,6 +50,16 @@ final class WeatherPageViewController: UIPageViewController {
         setupConstraints()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if pages.first?.isEmpty == false && pages.first?.isFromDeviceLocation == true {
+            if title == "Добавить новую локацию" {
+                title = "Идёт загрузка..."
+            }
+        }
+    }
+    
     private func setupPages() {
         var updatedPages: [WeatherViewController] = []
         

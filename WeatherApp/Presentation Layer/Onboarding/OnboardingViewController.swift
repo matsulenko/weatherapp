@@ -16,7 +16,7 @@ final class OnboardingViewController: UIViewController {
         let imageView = UIImageView(frame: .zero)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFit
-        imageView.image = UIImage(named: "Girl")
+        imageView.image = UIImage(named: "girl")
         
         return imageView
     }()
