@@ -204,7 +204,6 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         setupConstraints()
         if currentLocation != nil {
             setupTable()
-            setup24Hours(location: currentLocation!)
         }
         tableView.reloadData()
     }
