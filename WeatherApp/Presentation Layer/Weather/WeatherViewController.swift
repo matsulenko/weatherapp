@@ -366,8 +366,13 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
                 
                 self.tableView.reloadData()
                 
-                let sunriseHours = self.view.getHours(daily.forecast.first!.sun.sunrise!)
-                let sunsetHours = self.view.getHours(daily.forecast.first!.sun.sunset!)
+                var sunriseHours: Int?
+                var sunsetHours: Int?
+                
+                if daily.forecast.first?.sun.sunrise != nil && daily.forecast.first?.sun.sunset != nil {
+                    sunriseHours = self.view.getHours(daily.forecast.first!.sun.sunrise!)
+                    sunsetHours = self.view.getHours(daily.forecast.first!.sun.sunset!)
+                }
                 
                 var data24hoursMediumTemp: [WeatherForecastHourly] = []
                 var i = 0
@@ -383,14 +388,18 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
                     let rainProbability = Int(hourly.forecast[i].precipitationChance * 100)
                     let cloudiness = Int(hourly.forecast[i].cloudCover * 100)
                     
-                    if sunsetHours > sunriseHours {
-                        if self.view.getHours(hourly.forecast[i].date) >= sunriseHours && self.view.getHours(hourly.forecast[i].date) < sunsetHours {
-                            isDark = false
+                    if sunriseHours != nil && sunsetHours != nil {
+                        if sunsetHours! > sunriseHours! {
+                            if self.view.getHours(hourly.forecast[i].date) >= sunriseHours! && self.view.getHours(hourly.forecast[i].date) < sunsetHours! {
+                                isDark = false
+                            }
+                        } else {
+                            if self.view.getHours(hourly.forecast[i].date) >= sunriseHours! || self.view.getHours(hourly.forecast[i].date) < sunsetHours! {
+                                isDark = false
+                            }
                         }
                     } else {
-                        if self.view.getHours(hourly.forecast[i].date) >= sunriseHours || self.view.getHours(hourly.forecast[i].date) < sunsetHours {
-                            isDark = false
-                        }
+                        isDark = false
                     }
                     
                     let forecast = WeatherForecastHourly(
