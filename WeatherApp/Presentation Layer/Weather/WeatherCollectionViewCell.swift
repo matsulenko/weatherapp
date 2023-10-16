@@ -35,7 +35,7 @@ final class WeatherCollectionViewCell: UICollectionViewCell {
         label.font = UIFont(name: "Rubik-Light_Regular", size: 14)
         label.numberOfLines = 1
         label.textAlignment = .center
-        label.textColor = .black
+        label.textColor = UIColor(named: "Text")
         label.adjustsFontSizeToFitWidth = true
         
         return label
@@ -56,7 +56,7 @@ final class WeatherCollectionViewCell: UICollectionViewCell {
         label.font = UIFont(name: "Rubik-Light_Regular", size: 14)
         label.numberOfLines = 1
         label.textAlignment = .center
-        label.textColor = .black
+        label.textColor = UIColor(named: "Text")
         
         return label
     }()
@@ -134,11 +134,11 @@ final class WeatherCollectionViewCell: UICollectionViewCell {
             backgroundRectangle.backgroundColor = UIColor(named: "Main")
             backgroundRectangle.layer.borderColor = UIColor(named: "Main")?.cgColor
         } else {
-            conditionsImage.tintColor = UIColor(named: "Main")
+            conditionsImage.tintColor = UIColor(named: "MainChart")
             backgroundRectangle.backgroundColor = .clear
             backgroundRectangle.layer.borderColor = UIColor(named: "WeatherCollectionView")?.cgColor
-            timeLabel.textColor = .black
-            temperatureLabel.textColor = .black
+            timeLabel.textColor = UIColor(named: "Text")
+            temperatureLabel.textColor = UIColor(named: "Text")
         }
     }
 }

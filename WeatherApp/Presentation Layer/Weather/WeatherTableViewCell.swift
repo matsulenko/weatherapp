@@ -28,7 +28,7 @@ final class WeatherTableViewCell: UITableViewCell {
         label.font = UIFont(name: "Rubik-Light_Regular", size: 16)
         label.numberOfLines = 1
         label.textAlignment = .left
-        label.textColor = .black
+        label.textColor = UIColor(named: "Text")
         label.lineBreakMode = .byTruncatingMiddle
         label.focusGroupPriority = .ignored
         
@@ -41,7 +41,7 @@ final class WeatherTableViewCell: UITableViewCell {
         label.font = UIFont(name: "Rubik-Light_Regular", size: 12)
         label.numberOfLines = 1
         label.textAlignment = .left
-        label.textColor = UIColor(named: "Main")
+        label.textColor = UIColor(named: "MainChart")
         
         return label
     }()
@@ -52,7 +52,7 @@ final class WeatherTableViewCell: UITableViewCell {
         label.font = UIFont(name: "Rubik-Light_Regular", size: 18)
         label.numberOfLines = 1
         label.textAlignment = .right
-        label.textColor = .black
+        label.textColor = UIColor(named: "Text")
         label.focusGroupPriority = .prioritized
         
         return label
@@ -91,7 +91,7 @@ final class WeatherTableViewCell: UITableViewCell {
         
         conditionsLabel.text = weatherCondition(weatherForecastShort.conditions)
         conditionsImage.image = weatherConditionImage(condition: weatherForecastShort.conditions, isDark: false, isCurrent: false)
-        conditionsImage.tintColor = UIColor(named: "Main")
+        conditionsImage.tintColor = UIColor(named: "MainChart")
     }
     
     private func setupView() {

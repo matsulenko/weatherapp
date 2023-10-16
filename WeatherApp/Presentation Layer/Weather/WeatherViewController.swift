@@ -57,7 +57,7 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.contentHorizontalAlignment = .right
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(UIColor(named: "Text"), for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 250, weight: .semibold)
         button.setTitle("+", for: .normal)
                 
@@ -67,7 +67,7 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     private lazy var tableView: UITableView = {
         let tableView = UITableView.init(frame: .zero, style: .insetGrouped)
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.backgroundColor = .white
+        tableView.backgroundColor = UIColor(named: "Background")
         tableView.sectionFooterHeight = 10
         tableView.sectionHeaderHeight = 0
         tableView.layer.cornerRadius = 5
@@ -247,20 +247,20 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     }
 
     private func setupView() {
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "Background")
     }
     
     private func menuButton(action: Selector, imageName: String, width: Double, height: Double) -> UIBarButtonItem {
         let button = UIButton(type: .system)
         button.setImage(UIImage(named: imageName), for: .normal)
         button.addTarget(self, action: action, for: .touchUpInside)
-        button.tintColor = .black
+        button.tintColor = UIColor(named: "Text")
 
         let menuBarItem = UIBarButtonItem(customView: button)
         menuBarItem.customView?.translatesAutoresizingMaskIntoConstraints = false
         menuBarItem.customView?.heightAnchor.constraint(equalToConstant: height).isActive = true
         menuBarItem.customView?.widthAnchor.constraint(equalToConstant: width).isActive = true
-        menuBarItem.tintColor = .black
+        menuBarItem.tintColor = UIColor(named: "Text")
 
         return menuBarItem
     }
@@ -467,7 +467,7 @@ extension WeatherViewController: UITableViewDelegate, UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: WeatherTableViewCell.id, for: indexPath) as? WeatherTableViewCell else { return UITableViewCell() }
         let cellData = dataDaily[indexPath.section]
         cell.configure(with: cellData)
-        cell.tintColor = .black
+        cell.tintColor = UIColor(named: "Text")
         cell.isUserInteractionEnabled = false
         
         return cell

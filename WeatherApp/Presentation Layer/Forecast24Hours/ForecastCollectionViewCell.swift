@@ -26,7 +26,7 @@ final class ForecastCollectionViewCell: UICollectionViewCell {
         label.font = UIFont(name: "Rubik-Light_Regular", size: 12)
         label.numberOfLines = 1
         label.textAlignment = .center
-        label.textColor = .black
+        label.textColor = UIColor(named: "Text")
         
         return label
     }()
@@ -37,7 +37,7 @@ final class ForecastCollectionViewCell: UICollectionViewCell {
         label.font = UIFont(name: "Rubik-Light_Regular", size: 14)
         label.numberOfLines = 1
         label.textAlignment = .center
-        label.textColor = .black
+        label.textColor = UIColor(named: "Text")
         
         return label
     }()

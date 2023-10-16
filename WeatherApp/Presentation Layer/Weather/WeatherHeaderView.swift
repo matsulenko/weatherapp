@@ -30,7 +30,7 @@ final class WeatherHeaderView: UIView {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.contentHorizontalAlignment = .right
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(UIColor(named: "Text"), for: .normal)
         button.titleLabel?.font = UIFont(name: "Rubik-Light_Regular", size: 16)
         
         let text = "Подробнее на 24 часа"
@@ -65,7 +65,7 @@ final class WeatherHeaderView: UIView {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.contentHorizontalAlignment = .right
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(UIColor(named: "Text"), for: .normal)
         button.titleLabel?.font = UIFont(name: "Rubik-Light_Regular", size: 16)
         
         let text = "\(WeatherOptions.shared.numberOfDays) дней"
@@ -82,7 +82,7 @@ final class WeatherHeaderView: UIView {
         label.font = UIFont(name: "Rubik-Light_Medium", size: 18)
         label.numberOfLines = 1
         label.textAlignment = .left
-        label.textColor = .black
+        label.textColor = UIColor(named: "Text")
         label.text = "Ежедневный прогноз"
         
         return label
@@ -116,7 +116,7 @@ final class WeatherHeaderView: UIView {
     }
     
     private func setupView() {
-        backgroundColor = .white
+        backgroundColor = UIColor(named: "Background")
         collectionView.dataSource = self
         collectionView.delegate = self
     }

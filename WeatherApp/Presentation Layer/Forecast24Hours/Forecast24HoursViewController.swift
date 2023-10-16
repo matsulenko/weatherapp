@@ -28,7 +28,7 @@ final class Forecast24HoursViewController: UIViewController {
     private lazy var backgroundView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "Background")
         
         return view
     }()
@@ -76,9 +76,7 @@ final class Forecast24HoursViewController: UIViewController {
     }
     
     private func setupView() {
-        view.backgroundColor = .white
-        
-        overrideUserInterfaceStyle = .light
+        view.backgroundColor = UIColor(named: "Background")
     }
     
     @objc
