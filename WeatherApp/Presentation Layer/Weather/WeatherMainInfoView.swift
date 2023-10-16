@@ -12,7 +12,7 @@ import WeatherKit
 
 final class WeatherMainInfoView: UIView {
     
-    private var currentLocation: CLLocation
+    public var currentLocation: CLLocation
     
     private var locationName: String
     
@@ -215,7 +215,10 @@ final class WeatherMainInfoView: UIView {
         backgroundColor = .white
         
         loadFromCache()
-        
+        loadMainData()
+    }
+    
+    public func loadMainData() {
         Task.detached {
             guard let current = await WeatherData.shared.currentWeather(for: self.currentLocation) else { return }
             guard let hourlyCurrent = await WeatherData.shared.hourlyForecast(for: self.currentLocation) else { return }

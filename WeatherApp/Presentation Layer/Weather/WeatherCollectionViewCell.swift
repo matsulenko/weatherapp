@@ -111,7 +111,7 @@ final class WeatherCollectionViewCell: UICollectionViewCell {
             labelText = String(hourData.hours) + ":00"
         }
         
-        timeLabel.text = timeFormat(labelText)
+        timeLabel.text = timeFormatShort(labelText)
         
         if labelText == self.add3HoursToStartTimeString() {
             isCurrent = true

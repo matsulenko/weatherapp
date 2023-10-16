@@ -110,6 +110,11 @@ final class WeatherHeaderView: UIView {
         addSubview(tableTitle)
     }
     
+    public func updateCurrentLocation(location: CLLocation) {
+        currentLocation = location
+        mainInfo.currentLocation = location
+    }
+    
     private func setupView() {
         backgroundColor = .white
         collectionView.dataSource = self

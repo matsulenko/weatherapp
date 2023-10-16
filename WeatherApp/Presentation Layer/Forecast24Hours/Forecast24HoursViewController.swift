@@ -20,7 +20,7 @@ final class Forecast24HoursViewController: UIViewController {
         view.data24hours = data24hours
         view.translatesAutoresizingMaskIntoConstraints = false
         view.locationLabel.text = locationName
-        view.backImage.addGestureRecognizer(tapGesture)
+        view.backTarget.addGestureRecognizer(tapGesture)
         
         return view
     }()
@@ -76,9 +76,9 @@ final class Forecast24HoursViewController: UIViewController {
     }
     
     private func setupView() {
-        view.backgroundColor = UIColor(named: "Main")
+        view.backgroundColor = .white
         
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        overrideUserInterfaceStyle = .light
     }
     
     @objc

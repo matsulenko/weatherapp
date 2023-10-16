@@ -280,7 +280,7 @@ final class ForecastTableViewCell: UITableViewCell {
             timeLabelText = String(weatherForecastMedium.hours) + ":00"
         }
         
-        timeLabel.text = timeFormat(timeLabelText)
+        timeLabel.text = timeFormatShort(timeLabelText)
         
         let conditions = weatherCondition(weatherForecastMedium.conditions)
         

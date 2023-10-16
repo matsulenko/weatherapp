@@ -10,7 +10,9 @@ import UIKit
 public final class WeatherOptions {
     
     public var numberOfDays: Int = 7
-        
+    
+    public var doNotShowOnboarding = false
+    
     static let shared: WeatherOptions = {
         let instance = WeatherOptions()
         
