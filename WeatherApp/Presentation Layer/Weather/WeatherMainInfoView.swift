@@ -267,8 +267,12 @@ final class WeatherMainInfoView: UIView {
         currentWindLevel.text = "\(doubleToString(windFormat(currentWeather.weatherSpeed))) \(windSuffixMain())"
         currentRainProbability.text = doubleToString(currentWeather.precipitationChance*100) + "%"
         nightAndDayTemp.text = doubleToTemperature(temperatureFormat(currentWeather.lowTemperature)) + "/" + doubleToTemperature(temperatureFormat(currentWeather.highTemperature))
-        sunriseTime.text = timeFormat(currentWeather.sunriseTimeString)
-        sunsetTime.text = timeFormat(currentWeather.sunsetTimeString)
+        if currentWeather.sunriseTimeString != "" {
+            sunriseTime.text = timeFormat(currentWeather.sunriseTimeString)
+        }
+        if currentWeather.sunsetTimeString != "" {
+            sunsetTime.text = timeFormat(currentWeather.sunsetTimeString)
+        }
     }
     
     private func setupConstraints() {

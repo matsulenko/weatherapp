@@ -133,7 +133,7 @@ final class SettingsViewController: UIViewController {
                 temperatureButton1.backgroundColor = UIColor(named: "Main")
                 temperatureButton1.setTitleColor(.white, for: .normal)
                 temperatureButton2.backgroundColor = UIColor(named: "SettingsInactive")
-                temperatureButton2.setTitleColor(.black, for: .normal)
+                temperatureButton2.setTitleColor(UIColor(named: "Text"), for: .normal)
             }
         }
         
@@ -153,7 +153,7 @@ final class SettingsViewController: UIViewController {
                 temperatureButton2.backgroundColor = UIColor(named: "Main")
                 temperatureButton2.setTitleColor(.white, for: .normal)
                 temperatureButton1.backgroundColor = UIColor(named: "SettingsInactive")
-                temperatureButton1.setTitleColor(.black, for: .normal)
+                temperatureButton1.setTitleColor(UIColor(named: "Text"), for: .normal)
             }
         }
         
@@ -173,7 +173,7 @@ final class SettingsViewController: UIViewController {
                 windButton1.backgroundColor = UIColor(named: "Main")
                 windButton1.setTitleColor(.white, for: .normal)
                 windButton2.backgroundColor = UIColor(named: "SettingsInactive")
-                windButton2.setTitleColor(.black, for: .normal)
+                windButton2.setTitleColor(UIColor(named: "Text"), for: .normal)
             }
         }
         
@@ -194,7 +194,7 @@ final class SettingsViewController: UIViewController {
                 windButton2.backgroundColor = UIColor(named: "Main")
                 windButton2.setTitleColor(.white, for: .normal)
                 windButton1.backgroundColor = UIColor(named: "SettingsInactive")
-                windButton1.setTitleColor(.black, for: .normal)
+                windButton1.setTitleColor(UIColor(named: "Text"), for: .normal)
             }
         }
         
@@ -214,7 +214,7 @@ final class SettingsViewController: UIViewController {
                 timeButton1.backgroundColor = UIColor(named: "Main")
                 timeButton1.setTitleColor(.white, for: .normal)
                 timeButton2.backgroundColor = UIColor(named: "SettingsInactive")
-                timeButton2.setTitleColor(.black, for: .normal)
+                timeButton2.setTitleColor(UIColor(named: "Text"), for: .normal)
             }
         }
         
@@ -234,7 +234,7 @@ final class SettingsViewController: UIViewController {
                 timeButton2.backgroundColor = UIColor(named: "Main")
                 timeButton2.setTitleColor(.white, for: .normal)
                 timeButton1.backgroundColor = UIColor(named: "SettingsInactive")
-                timeButton1.setTitleColor(.black, for: .normal)
+                timeButton1.setTitleColor(UIColor(named: "Text"), for: .normal)
             }
         }
         
@@ -254,7 +254,7 @@ final class SettingsViewController: UIViewController {
                 notificationsButton1.backgroundColor = UIColor(named: "Main")
                 notificationsButton1.setTitleColor(.white, for: .normal)
                 notificationsButton2.backgroundColor = UIColor(named: "SettingsInactive")
-                notificationsButton2.setTitleColor(.black, for: .normal)
+                notificationsButton2.setTitleColor(UIColor(named: "Text"), for: .normal)
             }
         }
         
@@ -274,7 +274,7 @@ final class SettingsViewController: UIViewController {
                 notificationsButton2.backgroundColor = UIColor(named: "Main")
                 notificationsButton2.setTitleColor(.white, for: .normal)
                 notificationsButton1.backgroundColor = UIColor(named: "SettingsInactive")
-                notificationsButton1.setTitleColor(.black, for: .normal)
+                notificationsButton1.setTitleColor(UIColor(named: "Text"), for: .normal)
             }
         }
         
