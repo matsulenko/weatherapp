@@ -159,16 +159,19 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location: CLLocation = manager.location else { return }
         locationManager.stopUpdatingLocation()
-        if currentLocation == nil || isFromDeviceLocation == true {
-            self.refreshData(with: location)
-            setTitle()
-        }
+        
         if isFromDeviceLocation {
+            
+            print(locations)
+            self.refreshData(with: location)
+            
             let latitude = location.coordinate.latitude
             let longitude = location.coordinate.longitude
             let name = "Текущее местоположение"
             locationName = name
-            setTitle()
+            if title != "Текущее местоположение" {
+                setTitle()
+            }
             
             let newLocation = Location(latitude: latitude, longitude: longitude, name: name)
             RealmService().saveLocation(newLocation)
@@ -388,6 +391,12 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
                     let rainProbability = Int(hourly.forecast[i].precipitationChance * 100)
                     let cloudiness = Int(hourly.forecast[i].cloudCover * 100)
                     
+                    if i == 0 {
+                        if Int(self.view.getHours(hourly.forecast[i].date)) != Int(self.view.getHours(self.view.startTimeDate())) {
+                            break
+                        }
+                    }
+                    
                     if sunriseHours != nil && sunsetHours != nil {
                         if sunsetHours! > sunriseHours! {
                             if self.view.getHours(hourly.forecast[i].date) >= sunriseHours! && self.view.getHours(hourly.forecast[i].date) < sunsetHours! {
@@ -443,7 +452,14 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
             timer in
             
             if currentLocation != nil && isEmpty == false {
-                refreshData(with: currentLocation!)
+                
+                if isFromDeviceLocation {
+                    Task.detached {
+                        self.locationManager.startUpdatingLocation()
+                    }
+                }
+                
+                self.refreshData(with: self.currentLocation!)
             }
         }
     }

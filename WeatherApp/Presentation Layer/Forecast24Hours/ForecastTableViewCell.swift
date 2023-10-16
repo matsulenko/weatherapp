@@ -289,6 +289,6 @@ final class ForecastTableViewCell: UITableViewCell {
         windValueLabel.text = "\(doubleToString(windFormat(weatherForecastMedium.wind))) \(windSuffixTable()) \(windDirectionText(weatherForecastMedium.windDirection))"
         
         conditionsImage.image = weatherConditionImage(condition: weatherForecastMedium.conditions, isDark: weatherForecastMedium.isDark, isCurrent: false)
-        conditionsImage.tintColor = UIColor(named: "Main")
+        conditionsImage.tintColor = UIColor(named: "MainChart")
     }
 }
