@@ -77,11 +77,15 @@ final class ForecastCollectionViewCell: UICollectionViewCell {
     
     func setup(with hourData: WeatherForecastHourly) {
         
+        var timeLabelText = ""
+        
         if hourData.hours < 10 {
-            timeLabel.text = "0" + String(hourData.hours) + ":00"
+            timeLabelText = "0" + String(hourData.hours) + ":00"
         } else {
-            timeLabel.text = String(hourData.hours) + ":00"
+            timeLabelText = String(hourData.hours) + ":00"
         }
+        
+        timeLabel.text = timeFormatShort(timeLabelText)
         
         let conditions = hourData.conditions
         let isDark = hourData.isDark

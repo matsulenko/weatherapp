@@ -40,6 +40,16 @@ extension UIView {
         }
     }
     
+    func timeFormatShort(_ timeString: String) -> String {
+        let defaults = UserDefaults.standard
+        
+        if defaults.bool(forKey: "Time12") {
+            return timeAmPmShort(timeString)
+        } else {
+            return timeString
+        }
+    }
+    
     func timeFormatLong(_ timeString: String) -> String {
         let defaults = UserDefaults.standard
         
@@ -86,6 +96,18 @@ extension UIView {
         
         let dateFormatter12 = DateFormatter()
         dateFormatter12.dateFormat = "h:mm a"
+        
+        return dateFormatter12.string(from: time)
+    }
+    
+    func timeAmPmShort(_ twentyFourFormat: String) -> String {
+        let dateFormatter24 = DateFormatter()
+        dateFormatter24.dateFormat = "HH:mm"
+        
+        let time = dateFormatter24.date(from: twentyFourFormat)!
+        
+        let dateFormatter12 = DateFormatter()
+        dateFormatter12.dateFormat = "h a"
         
         return dateFormatter12.string(from: time)
     }

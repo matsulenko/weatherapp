@@ -34,7 +34,6 @@
 		BCA263512AC20D1900E753FB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BCA2634F2AC20D1900E753FB /* LaunchScreen.storyboard */; };
 		BCA2636D2AC21F3600E753FB /* Rubik-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BCA2636C2AC21F3600E753FB /* Rubik-VariableFont_wght.ttf */; };
 		BCA8A2522ACB67BC000973F4 /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = BCA8A2512ACB67BC000973F4 /* DGCharts */; };
-		BCA8A2542ACB67BC000973F4 /* DGChartsDynamic in Frameworks */ = {isa = PBXBuildFile; productRef = BCA8A2532ACB67BC000973F4 /* DGChartsDynamic */; };
 		BCA8A2562ACC7F38000973F4 /* ChartValueFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA8A2552ACC7F38000973F4 /* ChartValueFormatter.swift */; };
 		BCA8A2582ACC80E7000973F4 /* LineChartFillFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA8A2572ACC80E6000973F4 /* LineChartFillFormatter.swift */; };
 		BCA8A25A2ACC8217000973F4 /* Forecast24HoursHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA8A2592ACC8217000973F4 /* Forecast24HoursHeaderView.swift */; };
@@ -48,6 +47,19 @@
 		BCA8EF362AC8E44E00C39E5A /* WeatherOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA8EF352AC8E44E00C39E5A /* WeatherOptions.swift */; };
 		BCE4F5FF2AC37BD200795144 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE4F5FE2AC37BD200795144 /* OnboardingViewController.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		BC5EB8F02ADC52260064264C /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		BC32C7B72AC609FC00AFB265 /* WeatherHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherHeaderView.swift; sourceTree = "<group>"; };
@@ -98,7 +110,6 @@
 			files = (
 				BC85E4282AD3618F00E117F2 /* RealmSwift in Frameworks */,
 				BC85E4262AD3618F00E117F2 /* Realm in Frameworks */,
-				BCA8A2542ACB67BC000973F4 /* DGChartsDynamic in Frameworks */,
 				BCA8A2522ACB67BC000973F4 /* DGCharts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -305,6 +316,7 @@
 				BCA2633D2AC20D1800E753FB /* Sources */,
 				BCA2633E2AC20D1800E753FB /* Frameworks */,
 				BCA2633F2AC20D1800E753FB /* Resources */,
+				BC5EB8F02ADC52260064264C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -313,7 +325,6 @@
 			name = WeatherApp;
 			packageProductDependencies = (
 				BCA8A2512ACB67BC000973F4 /* DGCharts */,
-				BCA8A2532ACB67BC000973F4 /* DGChartsDynamic */,
 				BC85E4252AD3618F00E117F2 /* Realm */,
 				BC85E4272AD3618F00E117F2 /* RealmSwift */,
 			);
@@ -558,7 +569,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WeatherApp/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.weather";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Приложению нужен доступ к геолокации для показа прогноза погода в текущем местоположении";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -569,7 +580,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ru.netology.WeatherApp;
+				PRODUCT_BUNDLE_IDENTIFIER = ru.matsulenko.WeatherApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -594,7 +605,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WeatherApp/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.weather";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Приложению нужен доступ к геолокации для показа прогноза погода в текущем местоположении";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -605,7 +616,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ru.netology.WeatherApp;
+				PRODUCT_BUNDLE_IDENTIFIER = ru.matsulenko.WeatherApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -674,11 +685,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = BCA8A2502ACB67BC000973F4 /* XCRemoteSwiftPackageReference "Charts" */;
 			productName = DGCharts;
-		};
-		BCA8A2532ACB67BC000973F4 /* DGChartsDynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = BCA8A2502ACB67BC000973F4 /* XCRemoteSwiftPackageReference "Charts" */;
-			productName = DGChartsDynamic;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

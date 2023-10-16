@@ -29,7 +29,6 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         guard let currentLocation = currentLocation else { return UIView() }
         let view = WeatherHeaderView(frame: .zero, currentLocation: currentLocation, locationName: locationName ?? "")
         view.numberOfDaysButton.addTarget(self, action: #selector(changeNumberOfDays), for: .touchUpInside)
-        view.details24Hours.addTarget(self, action: #selector(openDetails), for: .touchUpInside)
         view.collectionView.addGestureRecognizer(tapGesture)
         
         return view
@@ -53,15 +52,6 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
             return false
         }
     }
-        
-    private lazy var whiteView: UIView = {
-        
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .white
-        
-        return view
-    }()
     
     lazy var plusButton: UIButton = {
         let button = UIButton()
@@ -119,6 +109,7 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
             setupTable()
             setup24Hours(location: currentLocation!)
         }
+        setTimer()
     }
     
     private func setupData() {
@@ -127,7 +118,6 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
             let realm = try Realm()
             let dailyObjects = realm.objects(WeatherForecastDailyObject.self).sorted(byKeyPath: "index", ascending: true)
             let dailyData: [WeatherForecastDaily] = dailyObjects.map { WeatherForecastDaily(weatherForecastDailyObject: $0) }
-            print("daily:",dailyObjects.count)
             for i in dailyData {
                 if i.locationName == locationName {
                     dailyWeatherCache.append(i)
@@ -141,7 +131,9 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
             var hourlyWeatherCache: [WeatherForecastHourly] = []
             let hourlyObjects = realm.objects(WeatherForecastHourlyObject.self).sorted(byKeyPath: "index", ascending: true)
             let hourlyData: [WeatherForecastHourly] = hourlyObjects.map { WeatherForecastHourly(weatherForecastHourlyObject: $0) }
-            print("hourly:",hourlyObjects.count)
+            if hourlyData.count > 0 {
+                (self.headerView as! WeatherHeaderView).details24Hours.addTarget(self, action: #selector(self.openDetails), for: .touchUpInside)
+            }
             for i in hourlyData {
                 if i.locationName == locationName {
                     hourlyWeatherCache.append(i)
@@ -166,46 +158,48 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location: CLLocation = manager.location else { return }
+        locationManager.stopUpdatingLocation()
         if currentLocation == nil || isFromDeviceLocation == true {
-            setTitle(location: location)
             self.refreshData(with: location)
+            setTitle()
         }
         if isFromDeviceLocation {
             let latitude = location.coordinate.latitude
             let longitude = location.coordinate.longitude
             let name = "Текущее местоположение"
             locationName = name
+            setTitle()
             
             let newLocation = Location(latitude: latitude, longitude: longitude, name: name)
             RealmService().saveLocation(newLocation)
         }
     }
     
-    private func setTitle(location: CLLocation) {
+    private func setTitle() {
         
-        CLGeocoder().reverseGeocodeLocation(location, preferredLocale: Locale(identifier: "ru_RU")) { placemarks, error in
-            let city = placemarks?.first?.locality
-            if city != "" && city != nil {
-                self.title = city
-                self.navigationController?.navigationBar.topItem?.title = city
-            } else {
-                self.title = self.locationName
-                self.navigationController?.navigationBar.topItem?.title = self.locationName
-            }
+        if isEmpty == false {
+            title = locationName
+            navigationController?.navigationBar.topItem?.title = locationName
         }
     }
     
     private func refreshData(with location: CLLocation) {
-        isEmpty = false
+        if isEmpty == true {
+            isEmpty = false
+            addSubviews()
+            setupView()
+            setupConstraints()
+        }
         currentLocation = location
+        (headerView as! WeatherHeaderView).updateCurrentLocation(location: location)
         setup24Hours(location: location)
-        addSubviews()
-        setupView()
-        setupConstraints()
         if currentLocation != nil {
             setupTable()
         }
         tableView.reloadData()
+        (headerView as! WeatherHeaderView).mainInfo.loadFromCache()
+        (headerView as! WeatherHeaderView).mainInfo.loadMainData()
+        (headerView as! WeatherHeaderView).collectionView.reloadData()
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -217,45 +211,35 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if onboardingWasShown == false {
-            showOnboarding()
-            defaults.set(true, forKey: "OnboardingWasShown")
+        if onboardingWasShown == false || locationManager.authorizationStatus == .notDetermined {
+            if WeatherOptions.shared.doNotShowOnboarding == false {
+                WeatherOptions.shared.doNotShowOnboarding = true
+                showOnboarding()
+                defaults.set(true, forKey: "OnboardingWasShown")
+            }
         }
         
         if isEmpty {
             title = "Добавить новую локацию"
         } else {
-            setTitle(location: currentLocation!)
-            Task {
-                try await Task.sleep(nanoseconds: 1_000_000_000)
-                
-                if title == "" || title == nil {
-                    title = locationName
-                }
-            }
+            setTitle()
         }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        if currentLocation != nil && isEmpty == false {
-            refreshData(with: currentLocation!)
+        if isEmpty == false {
+            updateNumberOfDays()
         }
         
-        if isEmpty == false {
-            view.layoutIfNeeded()
-            headerView.layoutIfNeeded()
-            (headerView as! WeatherHeaderView).mainInfo.loadFromCache()
-            (headerView as! WeatherHeaderView).collectionView.reloadData()
-            updateNumberOfDays()
-            tableView.reloadData()
+        if currentLocation != nil && isEmpty == false {
+            refreshData(with: currentLocation!)
         }
     }
     
     private func addSubviews() {
         if isEmpty {
-            view.addSubview(whiteView)
             view.addSubview(plusButton)
         } else {
             view.addSubview(tableView)
@@ -263,7 +247,7 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     }
 
     private func setupView() {
-        view.backgroundColor = UIColor(named: "Main")
+        view.backgroundColor = .white
     }
     
     private func menuButton(action: Selector, imageName: String, width: Double, height: Double) -> UIBarButtonItem {
@@ -294,18 +278,13 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         
         if isEmpty {
             NSLayoutConstraint.activate([
-                whiteView.topAnchor.constraint(equalTo: safeArea.topAnchor),
-                whiteView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-                whiteView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
-                whiteView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
-                
                 plusButton.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
                 plusButton.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor),
             ])
         } else {
             NSLayoutConstraint.activate([
-                tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                tableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+                tableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
                 tableView.topAnchor.constraint(equalTo: safeArea.topAnchor),
                 tableView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor)
             ])
@@ -357,7 +336,7 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
             guard let daily = await WeatherData.shared.dailyForecastWithDates(for: location, startDate: Date(), endDate: self.view.endDate()) else { return }
             
             DispatchQueue.main.async {
-                self.dataDaily = []
+                var dataDailyTemp: [WeatherForecastDaily] = []
                 for i: Int in 0..<daily.forecast.count {
                     let date = self.view.dateToStringShort(daily.forecast[i].date)
                     let conditions = daily.forecast[i].condition
@@ -375,8 +354,14 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
                         index: i
                     )
                     
-                    self.dataDaily.append(weatherForecastDaily)
-                    RealmService().saveWeatherForecastDaily(weatherForecastDaily)
+                    dataDailyTemp.append(weatherForecastDaily)
+                }
+                
+                if dataDailyTemp.count >= 10 {
+                    self.dataDaily = dataDailyTemp
+                    for i in dataDailyTemp {
+                        RealmService().saveWeatherForecastDaily(i)
+                    }
                 }
                 
                 self.tableView.reloadData()
@@ -384,7 +369,7 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
                 let sunriseHours = self.view.getHours(daily.forecast.first!.sun.sunrise!)
                 let sunsetHours = self.view.getHours(daily.forecast.first!.sun.sunset!)
                 
-                self.data24hoursMedium = []
+                var data24hoursMediumTemp: [WeatherForecastHourly] = []
                 var i = 0
                 var n = 0
                 while i < 25 {
@@ -423,15 +408,33 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
                         index: n
                     )
                     
-                    self.data24hoursMedium.append(forecast)
-                    RealmService().saveWeatherForecastHourly(forecast)
+                    data24hoursMediumTemp.append(forecast)
                     i += 3
                     n += 1
                 }
-                if self.isEmpty == false {
+                
+                if data24hoursMediumTemp.count >= 9 {
+                    self.data24hoursMedium = data24hoursMediumTemp
+                    for i in data24hoursMediumTemp {
+                        RealmService().saveWeatherForecastHourly(i)
+                    }
+                }
+                
+                if self.isEmpty == false && self.data24hoursMedium.count >= 9 {
                     (self.headerView as! WeatherHeaderView).data24hoursMedium = self.data24hoursMedium
                     (self.headerView as! WeatherHeaderView).reloadCollectionView()
+                    (self.headerView as! WeatherHeaderView).details24Hours.addTarget(self, action: #selector(self.openDetails), for: .touchUpInside)
                 }
+            }
+        }
+    }
+    
+    private func setTimer() {
+        _ = Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true) { [self]
+            timer in
+            
+            if currentLocation != nil && isEmpty == false {
+                refreshData(with: currentLocation!)
             }
         }
     }

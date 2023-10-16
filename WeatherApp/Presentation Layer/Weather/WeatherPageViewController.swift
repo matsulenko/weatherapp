@@ -52,12 +52,6 @@ final class WeatherPageViewController: UIPageViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-        if pages.first?.isEmpty == false && pages.first?.isFromDeviceLocation == true {
-            if title == "Добавить новую локацию" {
-                title = "Идёт загрузка..."
-            }
-        }
     }
     
     private func setupPages() {
@@ -84,7 +78,7 @@ final class WeatherPageViewController: UIPageViewController {
     }
         
     private func setupView() {
-        view.backgroundColor = UIColor(named: "Main")
+        view.backgroundColor = .white
         dataSource = self
         delegate = self
         pageControl.numberOfPages = pages.count
@@ -119,7 +113,9 @@ final class WeatherPageViewController: UIPageViewController {
     private func setupNavigationBar() {
         self.navigationItem.leftBarButtonItem = menuButton(action: #selector(openSettings), imageName: "Burger", width: 34, height: 18)
         self.navigationItem.rightBarButtonItem = menuButton(action: #selector(chooseLocation), imageName: "Location", width: 20, height: 26)
-        title = pages[0].title
+        if pages.count == 1 {
+            title = pages[0].title
+        }
         
         navigationController?.navigationBar.isHidden = false
         navigationController?.navigationBar.prefersLargeTitles = false
@@ -131,6 +127,8 @@ final class WeatherPageViewController: UIPageViewController {
         appearance.shadowColor = .clear
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        navigationController?.navigationBar.overrideUserInterfaceStyle = .light
+        navigationController?.overrideUserInterfaceStyle = .light
     }
     
     private func menuButton(action: Selector, imageName: String, width: Double, height: Double) -> UIBarButtonItem {

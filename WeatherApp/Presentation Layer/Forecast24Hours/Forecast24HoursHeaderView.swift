@@ -24,7 +24,7 @@ final class Forecast24HoursHeaderView: UIView {
         return spacing
     }()
         
-    lazy var backImage: UIImageView = {
+    private lazy var backImage: UIImageView = {
         let imageView = UIImageView(frame: .zero)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFit
@@ -33,6 +33,15 @@ final class Forecast24HoursHeaderView: UIView {
         imageView.isUserInteractionEnabled = true
         
         return imageView
+    }()
+    
+    lazy var backTarget: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .clear
+        view.isUserInteractionEnabled = true
+        
+        return view
     }()
     
     private lazy var titleLabel: UILabel = {
@@ -110,6 +119,7 @@ final class Forecast24HoursHeaderView: UIView {
         let valuesNumberFormatter = ChartValueFormatter(numberFormatter: numberFormatter)
         dataSet.valueFormatter = valuesNumberFormatter
         dataSet.valueFont = UIFont(name: "Rubik-Light_Regular", size: 14)!
+        dataSet.valueColors = [.black]
         
         let colors = [
             UIColor(named: "VeryLightBlue")!.cgColor,
@@ -249,6 +259,7 @@ final class Forecast24HoursHeaderView: UIView {
         addSubview(collectionView)
         addSubview(timeLine)
         addSubview(backImage)
+        addSubview(backTarget)
         addSubview(titleLabel)
         addSubview(locationLabel)
         addSubview(separator)
@@ -270,6 +281,11 @@ final class Forecast24HoursHeaderView: UIView {
             backImage.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
             backImage.widthAnchor.constraint(equalToConstant: 15),
             backImage.heightAnchor.constraint(equalTo: backImage.widthAnchor),
+            
+            backTarget.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+            backTarget.trailingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            backTarget.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
+            backTarget.heightAnchor.constraint(equalToConstant: 100),
             
             locationLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 15),
             locationLabel.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 48),
