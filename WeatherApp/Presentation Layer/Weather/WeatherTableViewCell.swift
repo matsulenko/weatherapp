@@ -83,11 +83,7 @@ final class WeatherTableViewCell: UITableViewCell {
     func configure(with weatherForecastShort: WeatherForecastDaily) {
         dateLabel.text = weatherForecastShort.date
         rainProbabilityLabel.text = String(weatherForecastShort.rainProbability) + "%"
-        if temperatureFormat(weatherForecastShort.maxTemperature) < 0 {
-            temperatureLabel.text = doubleToTemperature(temperatureFormat(weatherForecastShort.minTemperature)) + "– " + doubleToTemperature(temperatureFormat(weatherForecastShort.maxTemperature))
-        } else {
-            temperatureLabel.text = doubleToTemperature(temperatureFormat(weatherForecastShort.minTemperature)) + "–" + doubleToTemperature(temperatureFormat(weatherForecastShort.maxTemperature))
-        }
+        temperatureLabel.text = doubleToTemperature(temperatureFormat(weatherForecastShort.minTemperature)) + "/" + doubleToTemperature(temperatureFormat(weatherForecastShort.maxTemperature))
         
         conditionsLabel.text = weatherCondition(weatherForecastShort.conditions)
         conditionsImage.image = weatherConditionImage(condition: weatherForecastShort.conditions, isDark: false, isCurrent: false)
