@@ -54,7 +54,7 @@ final class SettingsViewController: UIViewController {
     private lazy var whiteView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "Background")
         view.layer.cornerRadius = 10
         
         return view
@@ -66,7 +66,7 @@ final class SettingsViewController: UIViewController {
         label.contentMode = .left
         label.numberOfLines = 1
         label.font = UIFont(name: "Rubik-Light_Medium", size: 18)
-        label.textColor = .black
+        label.textColor = UIColor(named: "Text")
         label.text = "Настройки"
         
         return label

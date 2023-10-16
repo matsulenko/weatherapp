@@ -17,7 +17,7 @@ final class ForecastTableViewCell: UITableViewCell {
         label.font = UIFont(name: "Rubik-Light_Medium", size: 18)
         label.numberOfLines = 1
         label.textAlignment = .left
-        label.textColor = .black
+        label.textColor = UIColor(named: "Text")
         
         return label
     }()
@@ -39,7 +39,7 @@ final class ForecastTableViewCell: UITableViewCell {
         label.font = UIFont(name: "Rubik-Light_Medium", size: 18)
         label.numberOfLines = 1
         label.textAlignment = .left
-        label.textColor = .black
+        label.textColor = UIColor(named: "Text")
         
         return label
     }()
@@ -86,7 +86,7 @@ final class ForecastTableViewCell: UITableViewCell {
         label.font = UIFont(name: "Rubik-Light_Regular", size: 14)
         label.numberOfLines = 1
         label.textAlignment = .left
-        label.textColor = .black
+        label.textColor = UIColor(named: "Text")
         label.lineBreakMode = .byTruncatingMiddle
         
         return label
@@ -98,7 +98,7 @@ final class ForecastTableViewCell: UITableViewCell {
         label.font = UIFont(name: "Rubik-Light_Regular", size: 14)
         label.numberOfLines = 1
         label.textAlignment = .left
-        label.textColor = .black
+        label.textColor = UIColor(named: "Text")
         label.lineBreakMode = .byTruncatingMiddle
         label.text = "Ветер"
         
@@ -111,7 +111,7 @@ final class ForecastTableViewCell: UITableViewCell {
         label.font = UIFont(name: "Rubik-Light_Regular", size: 14)
         label.numberOfLines = 1
         label.textAlignment = .left
-        label.textColor = .black
+        label.textColor = UIColor(named: "Text")
         label.lineBreakMode = .byTruncatingMiddle
         label.text = "Атмосферные осадки"
         
@@ -124,7 +124,7 @@ final class ForecastTableViewCell: UITableViewCell {
         label.font = UIFont(name: "Rubik-Light_Regular", size: 14)
         label.numberOfLines = 1
         label.textAlignment = .left
-        label.textColor = .black
+        label.textColor = UIColor(named: "Text")
         label.lineBreakMode = .byTruncatingMiddle
         label.text = "Облачность"
         

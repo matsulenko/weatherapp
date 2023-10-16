@@ -29,7 +29,7 @@ final class Forecast24HoursHeaderView: UIView {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFit
         imageView.image = UIImage(systemName: "arrow.backward")
-        imageView.tintColor = .black
+        imageView.tintColor = UIColor(named: "Text")
         imageView.isUserInteractionEnabled = true
         
         return imageView
@@ -62,7 +62,7 @@ final class Forecast24HoursHeaderView: UIView {
         label.font = UIFont(name: "Rubik-Light_Medium", size: 18)
         label.numberOfLines = 0
         label.textAlignment = .left
-        label.textColor = .black
+        label.textColor = UIColor(named: "Text")
         
         return label
     }()
@@ -72,7 +72,7 @@ final class Forecast24HoursHeaderView: UIView {
     private lazy var backgroundWhiteView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "Background")
         
         return view
     }()
@@ -80,7 +80,7 @@ final class Forecast24HoursHeaderView: UIView {
     private lazy var separator: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "Background")
         
         return view
     }()
@@ -107,8 +107,9 @@ final class Forecast24HoursHeaderView: UIView {
         
         let dataSet = LineChartDataSet(entries: lineChartEntries)
         dataSet.drawFilledEnabled = true
-        dataSet.setColor(UIColor(named: "Main")!)
+        dataSet.setColor(UIColor(named: "MainChart")!)
         dataSet.lineWidth = 0.3
+        dataSet.colors = [UIColor(named: "MainChart")!]
         dataSet.circleColors = [UIColor.white]
         dataSet.circleHoleRadius = 0
         dataSet.circleRadius = 2
@@ -119,11 +120,11 @@ final class Forecast24HoursHeaderView: UIView {
         let valuesNumberFormatter = ChartValueFormatter(numberFormatter: numberFormatter)
         dataSet.valueFormatter = valuesNumberFormatter
         dataSet.valueFont = UIFont(name: "Rubik-Light_Regular", size: 14)!
-        dataSet.valueColors = [.black]
+        dataSet.valueColors = [UIColor(named: "Text") ?? UIColor.systemGray3]
         
         let colors = [
             UIColor(named: "VeryLightBlue")!.cgColor,
-            UIColor(named: "Main")!.cgColor,
+            UIColor(named: "MainChart")!.cgColor,
             UIColor(named: "VeryLightBlue")!.cgColor
         ]
         
@@ -151,11 +152,11 @@ final class Forecast24HoursHeaderView: UIView {
         chart.extraTopOffset = 23
         
         chart.xAxis.axisLineWidth = 0.3
-        chart.xAxis.axisLineColor = UIColor(named: "Main")!
+        chart.xAxis.axisLineColor = UIColor(named: "MainChart")!
         chart.xAxis.axisLineDashLengths = [5.0]
         
         chart.leftAxis.axisLineWidth = 0.3
-        chart.leftAxis.axisLineColor = UIColor(named: "Main")!
+        chart.leftAxis.axisLineColor = UIColor(named: "MainChart")!
         chart.leftAxis.axisLineDashLengths = [5.0]
                 
         chart.translatesAutoresizingMaskIntoConstraints = false
@@ -176,9 +177,9 @@ final class Forecast24HoursHeaderView: UIView {
         }
         
         let dataSet = LineChartDataSet(entries: lineChartEntries)
-        dataSet.drawFilledEnabled = true
-        dataSet.setColor(UIColor(named: "Main")!)
+        dataSet.setColor(UIColor(named: "MainChart")!)
         dataSet.lineWidth = 0.5
+        dataSet.colors = [UIColor(named: "MainChart")!]
         dataSet.drawCirclesEnabled = false
         
         let data = LineChartData(dataSet: dataSet)
@@ -203,12 +204,12 @@ final class Forecast24HoursHeaderView: UIView {
         for i: Int in 1...8 {
             let line = ChartLimitLine(limit: Double(i))
             line.lineWidth = 4
-            line.lineColor = UIColor(named: "Main")!
+            line.lineColor = UIColor(named: "MainChart")!
             chart.xAxis.addLimitLine(line)
         }
         
         chart.translatesAutoresizingMaskIntoConstraints = false
-        chart.backgroundColor = UIColor(named: "VeryLightBlue")
+//        chart.backgroundColor = UIColor(named: "VeryLightBlue")
         chart.isUserInteractionEnabled = false
         
         return chart

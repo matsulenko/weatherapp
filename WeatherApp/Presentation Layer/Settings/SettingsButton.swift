@@ -23,7 +23,7 @@ final class SettingsButton: UIButton {
             setTitleColor(.white, for: .normal)
         } else {
             backgroundColor = UIColor(named: "SettingsInactive")
-            setTitleColor(.black, for: .normal)
+            setTitleColor(UIColor(named: "Text"), for: .normal)
         }
         
         self.buttonAction = buttonAction

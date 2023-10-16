@@ -17,12 +17,12 @@ final class WeatherPageViewController: UIPageViewController {
     
     private lazy var pageControl: UIPageControl = {
         let pageControl = UIPageControl()
-        pageControl.backgroundColor = .white
+        pageControl.backgroundColor = UIColor(named: "Background")
         pageControl.translatesAutoresizingMaskIntoConstraints = false
         pageControl.numberOfPages = pages.count
         pageControl.currentPage = 0
-        pageControl.pageIndicatorTintColor = .black
-        pageControl.currentPageIndicatorTintColor = .black
+        pageControl.pageIndicatorTintColor = UIColor(named: "Text")
+        pageControl.currentPageIndicatorTintColor = UIColor(named: "Text")
         pageControl.preferredIndicatorImage = UIImage(systemName: "circle.fill")
         
         for i in 1..<pages.count {
@@ -78,7 +78,7 @@ final class WeatherPageViewController: UIPageViewController {
     }
         
     private func setupView() {
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "Background")
         dataSource = self
         delegate = self
         pageControl.numberOfPages = pages.count
@@ -122,26 +122,24 @@ final class WeatherPageViewController: UIPageViewController {
         let attributes = [NSAttributedString.Key.font: UIFont(name: "Rubik-Light_Medium", size: 18)!]
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .white
+        appearance.backgroundColor = UIColor(named: "Background")
         appearance.titleTextAttributes = attributes
         appearance.shadowColor = .clear
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
-        navigationController?.navigationBar.overrideUserInterfaceStyle = .light
-        navigationController?.overrideUserInterfaceStyle = .light
     }
     
     private func menuButton(action: Selector, imageName: String, width: Double, height: Double) -> UIBarButtonItem {
         let button = UIButton(type: .system)
         button.setImage(UIImage(named: imageName), for: .normal)
         button.addTarget(self, action: action, for: .touchUpInside)
-        button.tintColor = .black
+        button.tintColor = UIColor(named: "Text")
 
         let menuBarItem = UIBarButtonItem(customView: button)
         menuBarItem.customView?.translatesAutoresizingMaskIntoConstraints = false
         menuBarItem.customView?.heightAnchor.constraint(equalToConstant: height).isActive = true
         menuBarItem.customView?.widthAnchor.constraint(equalToConstant: width).isActive = true
-        menuBarItem.tintColor = .black
+        menuBarItem.tintColor = UIColor(named: "Text")
 
         return menuBarItem
     }

@@ -212,7 +212,7 @@ final class WeatherMainInfoView: UIView {
     }
     
     private func setupView() {
-        backgroundColor = .white
+        backgroundColor = UIColor(named: "Background")
         
         loadFromCache()
         loadMainData()
