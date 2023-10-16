@@ -93,6 +93,6 @@ final class ForecastCollectionViewCell: UICollectionViewCell {
         rainProbabilitylabel.text = String(hourData.rainProbability) + "%"
         
         conditionsImage.image = weatherConditionImage(condition: conditions, isDark: isDark, isCurrent: false)
-        conditionsImage.tintColor = UIColor(named: "Main")
+        conditionsImage.tintColor = UIColor(named: "MainChart")
     }
 }

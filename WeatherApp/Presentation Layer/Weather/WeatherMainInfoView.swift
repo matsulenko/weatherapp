@@ -174,6 +174,7 @@ final class WeatherMainInfoView: UIView {
         label.numberOfLines = 1
         label.textAlignment = .center
         label.textColor = UIColor(named: "MainInfoYellow")
+        label.text = "Идёт загрузка"
         
         return label
     }()
