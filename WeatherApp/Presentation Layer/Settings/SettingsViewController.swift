@@ -40,16 +40,6 @@ final class SettingsViewController: UIViewController {
         
         return timeUnitChosen
     }()
-    
-    private lazy var notificationsAreEnabled: Bool = {
-        var notificationsAreEnabled: Bool = false
-        
-        if defaults.bool(forKey: "NotificationsEnabled") {
-            notificationsAreEnabled = true
-        }
-        
-        return notificationsAreEnabled
-    }()
         
     private lazy var whiteView: UIView = {
         let view = UIView()
@@ -104,18 +94,6 @@ final class SettingsViewController: UIViewController {
         label.textAlignment = .left
         label.textColor = UIColor(named: "WeatherTableGray")
         label.text = "Формат времени"
-        
-        return label
-    }()
-    
-    private lazy var notificationsLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "Rubik-Light_Regular", size: 16)
-        label.numberOfLines = 1
-        label.textAlignment = .left
-        label.textColor = UIColor(named: "WeatherTableGray")
-        label.text = "Уведомления"
         
         return label
     }()
@@ -241,46 +219,6 @@ final class SettingsViewController: UIViewController {
         return button
     }()
     
-    private lazy var notificationsButton1: SettingsButton = {
-        var isActive = false
-        
-        if notificationsAreEnabled == true {
-            isActive = true
-        }
-        
-        var button = SettingsButton(title: "On", isActive: isActive) { [self] in
-            if notificationsAreEnabled == false {
-                notificationsAreEnabled = true
-                notificationsButton1.backgroundColor = UIColor(named: "Main")
-                notificationsButton1.setTitleColor(.white, for: .normal)
-                notificationsButton2.backgroundColor = UIColor(named: "SettingsInactive")
-                notificationsButton2.setTitleColor(UIColor(named: "Text"), for: .normal)
-            }
-        }
-        
-        return button
-    }()
-    
-    private lazy var notificationsButton2: SettingsButton = {
-        var isActive = false
-        
-        if notificationsAreEnabled == false {
-            isActive = true
-        }
-        
-        var button = SettingsButton(title: "Off", isActive: isActive) { [self] in
-            if notificationsAreEnabled == true {
-                notificationsAreEnabled = false
-                notificationsButton2.backgroundColor = UIColor(named: "Main")
-                notificationsButton2.setTitleColor(.white, for: .normal)
-                notificationsButton1.backgroundColor = UIColor(named: "SettingsInactive")
-                notificationsButton1.setTitleColor(UIColor(named: "Text"), for: .normal)
-            }
-        }
-        
-        return button
-    }()
-    
     private lazy var temperatureButtons: SettingsStackView = {
         let stackView = SettingsStackView()
         stackView.addArrangedSubview(temperatureButton1)
@@ -305,15 +243,7 @@ final class SettingsViewController: UIViewController {
         return stackView
     }()
     
-    private lazy var notificationsButtons: SettingsStackView = {
-        let stackView = SettingsStackView()
-        stackView.addArrangedSubview(notificationsButton1)
-        stackView.addArrangedSubview(notificationsButton2)
-        
-        return stackView
-    }()
-    
-    private lazy var updateSettings = ShadowButton(title: "Установить") { [self] in
+    private lazy var updateSettings = ShadowButton(title: "Сохранить") { [self] in
         updateDefaults()
         self.dismiss(animated: true)
     }
@@ -348,6 +278,24 @@ final class SettingsViewController: UIViewController {
         return imageView
     }()
     
+    private lazy var xMark: UIImageView = {
+        let imageView = UIImageView(frame: .zero)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(systemName: "xmark.circle.fill")
+        imageView.isUserInteractionEnabled = true
+        imageView.tintColor = .systemRed
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissView))
+        imageView.addGestureRecognizer(tapGesture)
+        
+        return imageView
+    }()
+    
+    @objc
+    private func dismissView() {
+        self.dismiss(animated: true)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -362,15 +310,14 @@ final class SettingsViewController: UIViewController {
         view.addSubview(temperatureLabel)
         view.addSubview(windLabel)
         view.addSubview(timeLabel)
-        view.addSubview(notificationsLabel)
         view.addSubview(cloud1)
         view.addSubview(cloud2)
         view.addSubview(cloud3)
         view.addSubview(temperatureButtons)
         view.addSubview(windButtons)
         view.addSubview(timeButtons)
-        view.addSubview(notificationsButtons)
         view.addSubview(updateSettings)
+        view.addSubview(xMark)
     }
     
     private func setupView() {
@@ -384,7 +331,7 @@ final class SettingsViewController: UIViewController {
             whiteView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
             whiteView.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor),
             whiteView.widthAnchor.constraint(equalToConstant: 320),
-            whiteView.heightAnchor.constraint(equalToConstant: 330),
+            whiteView.heightAnchor.constraint(equalToConstant: 270),
             
             cloud1.heightAnchor.constraint(equalToConstant: 58),
             cloud1.widthAnchor.constraint(equalToConstant: 531),
@@ -437,21 +384,15 @@ final class SettingsViewController: UIViewController {
             timeButton1.widthAnchor.constraint(equalTo: temperatureButton1.widthAnchor),
             timeButton2.widthAnchor.constraint(equalTo: temperatureButton2.widthAnchor),
             
-            notificationsLabel.topAnchor.constraint(equalTo: timeLabel.bottomAnchor, constant: 20),
-            notificationsLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-            
-            notificationsButtons.centerYAnchor.constraint(equalTo: notificationsLabel.centerYAnchor),
-            notificationsButtons.trailingAnchor.constraint(equalTo: temperatureButtons.trailingAnchor),
-            notificationsButtons.widthAnchor.constraint(equalTo: temperatureButtons.widthAnchor),
-            notificationsButtons.heightAnchor.constraint(equalTo: temperatureButtons.heightAnchor),
-            
-            notificationsButton1.widthAnchor.constraint(equalTo: temperatureButton1.widthAnchor),
-            notificationsButton2.widthAnchor.constraint(equalTo: temperatureButton2.widthAnchor),
-            
             updateSettings.centerXAnchor.constraint(equalTo: whiteView.centerXAnchor),
             updateSettings.bottomAnchor.constraint(equalTo: whiteView.bottomAnchor, constant: -21),
             updateSettings.widthAnchor.constraint(equalToConstant: 250),
-            updateSettings.heightAnchor.constraint(equalToConstant: 40)
+            updateSettings.heightAnchor.constraint(equalToConstant: 40),
+            
+            xMark.widthAnchor.constraint(equalToConstant: 25),
+            xMark.heightAnchor.constraint(equalTo: xMark.widthAnchor),
+            xMark.trailingAnchor.constraint(equalTo: whiteView.trailingAnchor, constant: -10),
+            xMark.topAnchor.constraint(equalTo: whiteView.topAnchor, constant: 10)
         ])
     }
     
@@ -473,8 +414,6 @@ final class SettingsViewController: UIViewController {
         } else {
             defaults.set(false, forKey: "Time12")
         }
-        
-        defaults.set(notificationsAreEnabled, forKey: "NotificationsEnabled")
     }
     
 }

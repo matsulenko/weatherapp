@@ -14,13 +14,9 @@ final class Forecast24HoursViewController: UIViewController {
     private var locationName: String
     
     private lazy var headerView: Forecast24HoursHeaderView = {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissView))
-        
         let view = Forecast24HoursHeaderView(frame: .zero, data24hours: data24hours)
         view.data24hours = data24hours
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.locationLabel.text = locationName
-        view.backTarget.addGestureRecognizer(tapGesture)
         
         return view
     }()
@@ -79,11 +75,6 @@ final class Forecast24HoursViewController: UIViewController {
         view.backgroundColor = UIColor(named: "Background")
     }
     
-    @objc
-    private func dismissView() {
-        self.dismiss(animated: true)
-    }
-    
     private func setupConstraints() {
         let safeArea = view.safeAreaLayoutGuide
         NSLayoutConstraint.activate([
@@ -95,7 +86,7 @@ final class Forecast24HoursViewController: UIViewController {
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.topAnchor.constraint(equalTo: safeArea.topAnchor),
-            tableView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
     

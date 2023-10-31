@@ -64,7 +64,7 @@ final class OnboardingViewController: UIViewController {
     private lazy var manualLocation: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.contentHorizontalAlignment = .right
+        button.contentHorizontalAlignment = .center
         button.setTitleColor(UIColor(named: "OnboardingVeryLightGray2"), for: .normal)
         button.setTitle("НЕТ, Я БУДУ ДОБАВЛЯТЬ ЛОКАЦИИ", for: .normal)
         button.titleLabel?.font = UIFont(name: "Rubik-Light_Regular", size: 16)

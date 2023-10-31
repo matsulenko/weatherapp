@@ -26,7 +26,7 @@ final class WeatherTableViewCell: UITableViewCell {
         var label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "Rubik-Light_Regular", size: 16)
-        label.numberOfLines = 1
+        label.numberOfLines = 2
         label.textAlignment = .left
         label.textColor = UIColor(named: "Text")
         label.lineBreakMode = .byTruncatingMiddle
@@ -81,7 +81,7 @@ final class WeatherTableViewCell: UITableViewCell {
     }
     
     func configure(with weatherForecastShort: WeatherForecastDaily) {
-        dateLabel.text = weatherForecastShort.date
+        dateLabel.text = fullToShort(weatherForecastShort.date).lowercased()
         rainProbabilityLabel.text = String(weatherForecastShort.rainProbability) + "%"
         temperatureLabel.text = doubleToTemperature(temperatureFormat(weatherForecastShort.minTemperature)) + "/" + doubleToTemperature(temperatureFormat(weatherForecastShort.maxTemperature))
         

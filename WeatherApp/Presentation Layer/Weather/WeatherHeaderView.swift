@@ -33,7 +33,7 @@ final class WeatherHeaderView: UIView {
         button.setTitleColor(UIColor(named: "Text"), for: .normal)
         button.titleLabel?.font = UIFont(name: "Rubik-Light_Regular", size: 16)
         
-        let text = "Подробнее на 24 часа"
+        let text = "Подробнее"
         let attributedText = NSMutableAttributedString(string: text)
         attributedText.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: NSRange(location: 0, length: text.count))
         button.setAttributedTitle(attributedText, for: .normal)
@@ -128,15 +128,15 @@ final class WeatherHeaderView: UIView {
             mainInfo.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 40),
             mainInfo.heightAnchor.constraint(equalToConstant: 212),
             
-            details24Hours.topAnchor.constraint(equalTo: mainInfo.bottomAnchor, constant: 33),
+            details24Hours.topAnchor.constraint(equalTo: mainInfo.bottomAnchor, constant: 15),
             details24Hours.trailingAnchor.constraint(equalTo: mainInfo.trailingAnchor),
             
-            collectionView.topAnchor.constraint(equalTo: details24Hours.bottomAnchor, constant: 24),
+            collectionView.topAnchor.constraint(equalTo: details24Hours.bottomAnchor, constant: 15),
             collectionView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
             collectionView.heightAnchor.constraint(equalToConstant: 85),
             
-            numberOfDaysButton.topAnchor.constraint(equalTo: details24Hours.bottomAnchor, constant: 140),
+            numberOfDaysButton.topAnchor.constraint(equalTo: details24Hours.bottomAnchor, constant: 120),
             numberOfDaysButton.trailingAnchor.constraint(equalTo: mainInfo.trailingAnchor),
             
             tableTitle.centerYAnchor.constraint(equalTo: numberOfDaysButton.centerYAnchor),
@@ -153,13 +153,13 @@ final class WeatherHeaderView: UIView {
 
 extension WeatherHeaderView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        data24hoursMedium.count
+        (data24hoursMedium.count - 1)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WeatherCollectionViewCell.id, for: indexPath) as! WeatherCollectionViewCell
         
-        let hourData = data24hoursMedium[indexPath.row]
+        let hourData = data24hoursMedium[indexPath.row + 1]
         cell.setup(with: hourData)
         
         return cell

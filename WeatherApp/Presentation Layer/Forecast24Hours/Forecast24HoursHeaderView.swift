@@ -23,46 +23,15 @@ final class Forecast24HoursHeaderView: UIView {
         
         return spacing
     }()
-        
-    private lazy var backImage: UIImageView = {
-        let imageView = UIImageView(frame: .zero)
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFit
-        imageView.image = UIImage(systemName: "arrow.backward")
-        imageView.tintColor = UIColor(named: "Text")
-        imageView.isUserInteractionEnabled = true
-        
-        return imageView
-    }()
     
-    lazy var backTarget: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .clear
-        view.isUserInteractionEnabled = true
-        
-        return view
-    }()
-    
-    private lazy var titleLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "Rubik-Light_Regular", size: 16)
-        label.numberOfLines = 1
-        label.textAlignment = .left
-        label.textColor = UIColor(named: "WeatherTableGray")
-        label.text = "Прогноз на 24 часа"
-        
-        return label
-    }()
-    
-    lazy var locationLabel: UILabel = {
+    lazy var topLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "Rubik-Light_Medium", size: 18)
         label.numberOfLines = 0
         label.textAlignment = .left
         label.textColor = UIColor(named: "Text")
+        label.text = "Прогноз на 24 часа"
         
         return label
     }()
@@ -259,40 +228,23 @@ final class Forecast24HoursHeaderView: UIView {
         addSubview(temperatureChart)
         addSubview(collectionView)
         addSubview(timeLine)
-        addSubview(backImage)
-        addSubview(backTarget)
-        addSubview(titleLabel)
-        addSubview(locationLabel)
+        addSubview(topLabel)
         addSubview(separator)
     }
     
     private func setupView() {
-        backgroundColor = UIColor(named: "VeryLightBlue")
+        backgroundColor = UIColor(named: "Background")
         collectionView.dataSource = self
         collectionView.delegate = self
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 30),
-            titleLabel.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 52),
-            titleLabel.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            topLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 15),
+            topLabel.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 48),
+            topLabel.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16),
             
-            backImage.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            backImage.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
-            backImage.widthAnchor.constraint(equalToConstant: 15),
-            backImage.heightAnchor.constraint(equalTo: backImage.widthAnchor),
-            
-            backTarget.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
-            backTarget.trailingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-            backTarget.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
-            backTarget.heightAnchor.constraint(equalToConstant: 100),
-            
-            locationLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 15),
-            locationLabel.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 48),
-            locationLabel.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16),
-            
-            temperatureChart.topAnchor.constraint(equalTo: locationLabel.bottomAnchor, constant: 15),
+            temperatureChart.topAnchor.constraint(equalTo: topLabel.bottomAnchor, constant: 15),
             temperatureChart.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 16),
             temperatureChart.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16),
             temperatureChart.heightAnchor.constraint(equalToConstant: 58),

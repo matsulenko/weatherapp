@@ -167,6 +167,41 @@ final class ForecastTableViewCell: UITableViewCell {
         return label
     }()
     
+    private lazy var feeltemperatureLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "Rubik-Light_Regular", size: 14)
+        label.numberOfLines = 1
+        label.textAlignment = .left
+        label.textColor = UIColor(named: "Text")
+        label.lineBreakMode = .byTruncatingMiddle
+        label.text = "Ощущается как"
+        
+        return label
+    }()
+    
+    private lazy var feeltemperatureImage: UIImageView = {
+        let imageView = UIImageView(frame: .zero)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
+        imageView.image = UIImage(systemName: "thermometer.medium")
+        imageView.tintColor = UIColor(named: "MainChart")
+        
+        return imageView
+    }()
+    
+    private lazy var feeltemperatureValueLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "Rubik-Light_Regular", size: 14)
+        label.numberOfLines = 1
+        label.textAlignment = .right
+        label.textColor = UIColor(named: "WeatherTableGray")
+        label.lineBreakMode = .byTruncatingMiddle
+        
+        return label
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -184,34 +219,32 @@ final class ForecastTableViewCell: UITableViewCell {
     }
     
     private func addSubviews() {
-         addSubview(dateLabel)
-         addSubview(timeLabel)
-         addSubview(temperatureLabel)
-         addSubview(conditionsImage)
-         addSubview(windImage)
-         addSubview(precipitationImage)
-         addSubview(cloudinessImage)
-         addSubview(conditionsLabel)
-         addSubview(windLabel)
-         addSubview(precipitationLabel)
-         addSubview(cloudinessLabel)
-         addSubview(windValueLabel)
-         addSubview(precipitationValueLabel)
-         addSubview(cloudinessValueLabel)
+        addSubview(timeLabel)
+        addSubview(temperatureLabel)
+        addSubview(conditionsImage)
+        addSubview(windImage)
+        addSubview(precipitationImage)
+        addSubview(cloudinessImage)
+        addSubview(conditionsLabel)
+        addSubview(feeltemperatureLabel)
+        addSubview(feeltemperatureImage)
+        addSubview(feeltemperatureValueLabel)
+        addSubview(windLabel)
+        addSubview(precipitationLabel)
+        addSubview(cloudinessLabel)
+        addSubview(windValueLabel)
+        addSubview(precipitationValueLabel)
+        addSubview(cloudinessValueLabel)
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            dateLabel.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            dateLabel.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16),
-            dateLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 15),
-            
-            timeLabel.leadingAnchor.constraint(equalTo: dateLabel.leadingAnchor),
-            timeLabel.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 8),
+            timeLabel.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            timeLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 13),
             timeLabel.widthAnchor.constraint(equalToConstant: 58),
             
-            temperatureLabel.leadingAnchor.constraint(equalTo: dateLabel.leadingAnchor, constant: 6),
-            temperatureLabel.topAnchor.constraint(equalTo: dateLabel.topAnchor, constant: 59),
+            temperatureLabel.leadingAnchor.constraint(equalTo: timeLabel.leadingAnchor, constant: 6),
+            temperatureLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 59),
             temperatureLabel.widthAnchor.constraint(equalToConstant: 52),
             
             conditionsImage.leadingAnchor.constraint(equalTo: timeLabel.leadingAnchor, constant: 58),
@@ -219,15 +252,28 @@ final class ForecastTableViewCell: UITableViewCell {
             conditionsImage.widthAnchor.constraint(equalToConstant: 12),
             conditionsImage.heightAnchor.constraint(equalTo: conditionsImage.widthAnchor),
             
-            conditionsLabel.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 8),
+            conditionsLabel.topAnchor.constraint(equalTo: timeLabel.topAnchor),
             conditionsLabel.leadingAnchor.constraint(equalTo: timeLabel.trailingAnchor, constant: 27),
             conditionsLabel.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16),
             
-            windLabel.leadingAnchor.constraint(equalTo: conditionsLabel.leadingAnchor),
-            windLabel.topAnchor.constraint(equalTo: conditionsLabel.bottomAnchor, constant: 8),
-            windLabel.trailingAnchor.constraint(equalTo: conditionsLabel.trailingAnchor, constant: 100),
+            feeltemperatureLabel.leadingAnchor.constraint(equalTo: conditionsLabel.leadingAnchor),
+            feeltemperatureLabel.topAnchor.constraint(equalTo: conditionsLabel.bottomAnchor, constant: 8),
+            feeltemperatureLabel.trailingAnchor.constraint(equalTo: conditionsLabel.trailingAnchor, constant: 100),
             
-            windImage.leadingAnchor.constraint(equalTo: conditionsImage.leadingAnchor),
+            feeltemperatureImage.leadingAnchor.constraint(equalTo: conditionsImage.leadingAnchor),
+            feeltemperatureImage.centerYAnchor.constraint(equalTo: feeltemperatureLabel.centerYAnchor),
+            feeltemperatureImage.widthAnchor.constraint(equalToConstant: 15),
+            feeltemperatureImage.heightAnchor.constraint(equalToConstant: 10),
+                        
+            feeltemperatureValueLabel.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            feeltemperatureValueLabel.widthAnchor.constraint(equalToConstant: 100),
+            feeltemperatureValueLabel.topAnchor.constraint(equalTo: feeltemperatureLabel.topAnchor),
+            
+            windLabel.leadingAnchor.constraint(equalTo: feeltemperatureLabel.leadingAnchor),
+            windLabel.topAnchor.constraint(equalTo: feeltemperatureLabel.bottomAnchor, constant: 8),
+            windLabel.trailingAnchor.constraint(equalTo: feeltemperatureLabel.trailingAnchor, constant: 100),
+            
+            windImage.leadingAnchor.constraint(equalTo: feeltemperatureImage.leadingAnchor),
             windImage.centerYAnchor.constraint(equalTo: windLabel.centerYAnchor),
             windImage.widthAnchor.constraint(equalToConstant: 15),
             windImage.heightAnchor.constraint(equalToConstant: 10),
@@ -267,7 +313,6 @@ final class ForecastTableViewCell: UITableViewCell {
     }
     
     func configure(with weatherForecastMedium: WeatherForecastHourly) {
-        dateLabel.text = weatherForecastMedium.date
         temperatureLabel.text = doubleToTemperature(temperatureFormat(weatherForecastMedium.temperature))
         precipitationValueLabel.text = String(weatherForecastMedium.rainProbability) + "%"
         cloudinessValueLabel.text = String(weatherForecastMedium.cloudiness) + "%"
@@ -284,9 +329,11 @@ final class ForecastTableViewCell: UITableViewCell {
         
         let conditions = weatherCondition(weatherForecastMedium.conditions)
         
-        conditionsLabel.text = "\(conditions). По ощущению \(doubleToTemperature(temperatureFormat(weatherForecastMedium.feelTemperature)))"
+        conditionsLabel.text = conditions
                 
         windValueLabel.text = "\(doubleToString(windFormat(weatherForecastMedium.wind))) \(windSuffixTable()) \(windDirectionText(weatherForecastMedium.windDirection))"
+        
+        feeltemperatureValueLabel.text = doubleToTemperature(temperatureFormat(weatherForecastMedium.feelTemperature))
         
         conditionsImage.image = weatherConditionImage(condition: weatherForecastMedium.conditions, isDark: weatherForecastMedium.isDark, isCurrent: false)
         conditionsImage.tintColor = UIColor(named: "MainChart")

@@ -108,6 +108,7 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         if currentLocation != nil {
             setupTable()
             setup24Hours(location: currentLocation!)
+            
         }
         setTimer()
     }
@@ -132,7 +133,7 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
             let hourlyObjects = realm.objects(WeatherForecastHourlyObject.self).sorted(byKeyPath: "index", ascending: true)
             let hourlyData: [WeatherForecastHourly] = hourlyObjects.map { WeatherForecastHourly(weatherForecastHourlyObject: $0) }
             if hourlyData.count > 0 {
-                (self.headerView as! WeatherHeaderView).details24Hours.addTarget(self, action: #selector(self.openDetails), for: .touchUpInside)
+//                (self.headerView as! WeatherHeaderView).details24Hours.addTarget(self, action: #selector(self.openDetails), for: .touchUpInside)
             }
             for i in hourlyData {
                 if i.locationName == locationName {
@@ -168,7 +169,11 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
             let latitude = location.coordinate.latitude
             let longitude = location.coordinate.longitude
             let name = "Текущее местоположение"
-            locationName = name
+            
+            if locationName == nil {
+                locationName = name
+            }
+            
             if title != "Текущее местоположение" {
                 setTitle()
             }
@@ -289,7 +294,7 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
                 tableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
                 tableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
                 tableView.topAnchor.constraint(equalTo: safeArea.topAnchor),
-                tableView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor)
+                tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             ])
         }
     }
@@ -319,7 +324,7 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         let targetViewController = Forecast24HoursViewController(locationName: locationName ?? "", data24hours: data24hoursMedium)
         targetViewController.modalPresentationStyle = .fullScreen
         guard let navigationController = self.navigationController else { return }
-        navigationController.present(targetViewController, animated: true)
+        navigationController.pushViewController(targetViewController, animated: true)
     }
     
     private func updateNumberOfDays() {
@@ -341,7 +346,7 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
             DispatchQueue.main.async {
                 var dataDailyTemp: [WeatherForecastDaily] = []
                 for i: Int in 0..<daily.forecast.count {
-                    let date = self.view.dateToStringShort(daily.forecast[i].date)
+                    let date = self.view.dateToStringFull(daily.forecast[i].date)
                     let conditions = daily.forecast[i].condition
                     let rainProbability = Int(daily.forecast[i].precipitationChance * 100)
                     let minTemperature = daily.forecast[i].lowTemperature.value
@@ -401,16 +406,22 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
                         if sunsetHours! > sunriseHours! {
                             if self.view.getHours(hourly.forecast[i].date) >= sunriseHours! && self.view.getHours(hourly.forecast[i].date) < sunsetHours! {
                                 isDark = false
+                            } else {
+                                isDark = true
                             }
                         } else {
-                            if self.view.getHours(hourly.forecast[i].date) >= sunriseHours! || self.view.getHours(hourly.forecast[i].date) < sunsetHours! {
+                            if self.view.getHours(hourly.forecast[i].date) >= sunriseHours! {
                                 isDark = false
+                            } else if self.view.getHours(hourly.forecast[i].date) < sunsetHours! {
+                                isDark = false
+                            } else {
+                                isDark = true
                             }
                         }
                     } else {
                         isDark = false
                     }
-                    
+                                        
                     let forecast = WeatherForecastHourly(
                         date: date,
                         hours: hours,

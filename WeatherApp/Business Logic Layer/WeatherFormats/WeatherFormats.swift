@@ -148,7 +148,8 @@ extension UIView {
     func dateToStringShort(_ date: Date?) -> String {
         guard let date = date else { return "" }
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd/MM"
+        dateFormatter.dateFormat = "E d"
+        dateFormatter.locale = Locale(identifier: "ru_RU")
         
         return dateFormatter.string(from: date)
     }
@@ -160,6 +161,12 @@ extension UIView {
         dateFormatter.locale = Locale(identifier: "ru_RU")
         
         return dateFormatter.string(from: date).lowercased()
+    }
+    
+    func fullToShort(_ dateString: String?) -> String {
+        guard let date = stringToDateFull(dateString) else { return "" }
+        
+        return dateToStringShort(date)
     }
     
     func dateToStringFull(_ date: Date?) -> String {
@@ -178,11 +185,12 @@ extension UIView {
         return dateFormatter.string(from: date)
     }
     
-    func stringToDateFull(_ dateString: String) -> Date {
+    func stringToDateFull(_ dateString: String?) -> Date? {
+        guard let dateString = dateString else { return nil }
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
         
-        return dateFormatter.date(from: dateString)!
+        return dateFormatter.date(from: dateString)
     }
     
     func getHours(_ date: Date) -> Int {
