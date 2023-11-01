@@ -13,6 +13,8 @@ public final class WeatherOptions {
     
     public var doNotShowOnboarding = false
     
+    public var settingsWereUpdated = false
+    
     static let shared: WeatherOptions = {
         let instance = WeatherOptions()
         

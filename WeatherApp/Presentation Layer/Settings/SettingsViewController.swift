@@ -245,6 +245,7 @@ final class SettingsViewController: UIViewController {
     
     private lazy var updateSettings = ShadowButton(title: "Сохранить") { [self] in
         updateDefaults()
+        WeatherOptions.shared.settingsWereUpdated = true
         self.dismiss(animated: true)
     }
     

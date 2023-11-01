@@ -12,7 +12,9 @@ import WeatherKit
 final class WeatherHeaderView: UIView {
     
     private var currentLocation: CLLocation
-        
+    
+    private var timeZoneIdentifier: String?
+    
     private var locationName: String
     
     private lazy var numberOfDays = 7
@@ -20,7 +22,7 @@ final class WeatherHeaderView: UIView {
     var data24hoursMedium: [WeatherForecastHourly] = []
     
     lazy var mainInfo: WeatherMainInfoView = {
-        var view = WeatherMainInfoView(frame: .zero, currentLocation: currentLocation, locationName: locationName)
+        var view = WeatherMainInfoView(frame: .zero, currentLocation: currentLocation, locationName: locationName, timeZoneIdentifier: timeZoneIdentifier)
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -88,9 +90,10 @@ final class WeatherHeaderView: UIView {
         return label
     }()
     
-    init(frame: CGRect, currentLocation: CLLocation, locationName: String) {
+    init(frame: CGRect, currentLocation: CLLocation, locationName: String, timeZoneIdentifier: String?) {
         self.currentLocation = currentLocation
         self.locationName = locationName
+        self.timeZoneIdentifier = timeZoneIdentifier
         super.init(frame: frame)
         
         addSubviews()
@@ -113,6 +116,7 @@ final class WeatherHeaderView: UIView {
     public func updateCurrentLocation(location: CLLocation) {
         currentLocation = location
         mainInfo.currentLocation = location
+        mainInfo.timeZoneIdentifier = timeZoneIdentifier
     }
     
     private func setupView() {
@@ -153,13 +157,18 @@ final class WeatherHeaderView: UIView {
 
 extension WeatherHeaderView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        (data24hoursMedium.count - 1)
+        if data24hoursMedium.count < (24 + getHours(Date(), timeZoneIdentifier: timeZoneIdentifier)) {
+            data24hoursMedium.count
+        } else {
+            24
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WeatherCollectionViewCell.id, for: indexPath) as! WeatherCollectionViewCell
+        cell.timeZoneIdentifier = timeZoneIdentifier
         
-        let hourData = data24hoursMedium[indexPath.row + 1]
+        let hourData = data24hoursMedium[indexPath.row + getHours(Date(), timeZoneIdentifier: timeZoneIdentifier)]
         cell.setup(with: hourData)
         
         return cell

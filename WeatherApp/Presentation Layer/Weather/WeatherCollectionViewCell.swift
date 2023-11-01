@@ -14,6 +14,8 @@ final class WeatherCollectionViewCell: UICollectionViewCell {
     
     private var isCurrent = false
     
+    var timeZoneIdentifier: String?
+    
     private var isDark = true
     
     private var conditions: WeatherCondition?
@@ -113,7 +115,7 @@ final class WeatherCollectionViewCell: UICollectionViewCell {
         
         timeLabel.text = timeFormatShort(labelText)
         
-        if labelText == self.add3HoursToStartTimeString() {
+        if labelText == self.currentTimeString(timeZoneIdentifier: timeZoneIdentifier) {
             isCurrent = true
         } else {
             isCurrent = false

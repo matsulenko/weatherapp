@@ -10,6 +10,8 @@ import UIKit
 final class WeatherTableViewCell: UITableViewCell {
     
     static let id = "WeatherCell"
+    
+    var timeZoneIdentifier: String?
         
     private lazy var dateLabel: UILabel = {
         var label = UILabel()
@@ -81,7 +83,7 @@ final class WeatherTableViewCell: UITableViewCell {
     }
     
     func configure(with weatherForecastShort: WeatherForecastDaily) {
-        dateLabel.text = fullToShort(weatherForecastShort.date).lowercased()
+        dateLabel.text = fullToShort(weatherForecastShort.date, timeZoneIdentifier: timeZoneIdentifier).lowercased()
         rainProbabilityLabel.text = String(weatherForecastShort.rainProbability) + "%"
         temperatureLabel.text = doubleToTemperature(temperatureFormat(weatherForecastShort.minTemperature)) + "/" + doubleToTemperature(temperatureFormat(weatherForecastShort.maxTemperature))
         

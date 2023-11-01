@@ -14,6 +14,8 @@ final class WeatherMainInfoView: UIView {
     
     public var currentLocation: CLLocation
     
+    public var timeZoneIdentifier: String?
+    
     private var locationName: String
     
     private lazy var mainInfoBackground: UIView = {
@@ -183,9 +185,10 @@ final class WeatherMainInfoView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(frame: CGRect, currentLocation: CLLocation, locationName: String) {
+    init(frame: CGRect, currentLocation: CLLocation, locationName: String, timeZoneIdentifier: String?) {
         self.currentLocation = currentLocation
         self.locationName = locationName
+        self.timeZoneIdentifier = timeZoneIdentifier
         super.init(frame: frame)
         
         addSubviews()
@@ -220,16 +223,16 @@ final class WeatherMainInfoView: UIView {
     }
     
     public func loadMainData() {
-        Task.detached {
-            guard let current = await WeatherData.shared.currentWeather(for: self.currentLocation) else { return }
-            guard let hourlyCurrent = await WeatherData.shared.hourlyForecast(for: self.currentLocation) else { return }
-            guard let daily = await WeatherData.shared.dailyForecastWithDates(for: self.currentLocation, startDate: Date(), endDate: self.endDate()) else { return }
+        Task.detached { [self] in
+            guard let current = await WeatherData.shared.currentWeather(for: currentLocation) else { return }
+            guard let hourlyCurrent = await WeatherData.shared.hourlyForecast(for: currentLocation) else { return }
+            guard let daily = await WeatherData.shared.dailyForecastWithDates(for: currentLocation, startDate: startTimeDate(timeZoneIdentifier: timeZoneIdentifier), endDate: endDate(timeZoneIdentifier: timeZoneIdentifier)) else { return }
             
             DispatchQueue.main.async { [self] in
                 guard let dailyForecast = daily.forecast.first else { return }
                 let currentWeather = WeatherForecastCurrent(
                     locationName: locationName,
-                    updateTimeString: dateToStringLong(current.date),
+                    updateTimeString: dateToStringLong(current.date, timeZoneIdentifier: timeZoneIdentifier),
                     temperature: current.temperature.value,
                     currentConditions: weatherCondition(current.condition),
                     precipitationIntensity: current.precipitationIntensity.value,
@@ -237,8 +240,8 @@ final class WeatherMainInfoView: UIView {
                     precipitationChance: hourlyCurrent.forecast[0].precipitationChance,
                     lowTemperature: daily.forecast.first!.lowTemperature.value,
                     highTemperature: daily.forecast.first!.highTemperature.value,
-                    sunriseTimeString: dateToStringTime(dailyForecast.sun.sunrise),
-                    sunsetTimeString: dateToStringTime(dailyForecast.sun.sunset)
+                    sunriseTimeString: dateToStringTime(dailyForecast.sun.sunrise, timeZoneIdentifier: timeZoneIdentifier),
+                    sunsetTimeString: dateToStringTime(dailyForecast.sun.sunset, timeZoneIdentifier: timeZoneIdentifier)
                 )
                 
                 updateLabels(currentWeather: currentWeather)
@@ -261,7 +264,7 @@ final class WeatherMainInfoView: UIView {
     }
     
     private func updateLabels(currentWeather: WeatherForecastCurrent) {
-        updateTime.text = timeFormatLong(currentWeather.updateTimeString).lowercased()
+        updateTime.text = timeFormatLong(currentWeather.updateTimeString, timeZoneIdentifier: timeZoneIdentifier)
         currentTemp.text = doubleToTemperature(temperatureFormat(currentWeather.temperature))
         currentConditions.text = currentWeather.currentConditions
         currentPrecipitationLevel.text = doubleToString(currentWeather.precipitationIntensity)
