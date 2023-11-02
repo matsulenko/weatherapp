@@ -223,7 +223,7 @@ final class WeatherMainInfoView: UIView {
     }
     
     public func loadMainData() {
-        Task.detached { [self] in
+        Task.detached(priority: .utility) { [self] in
             guard let current = await WeatherData.shared.currentWeather(for: currentLocation) else { return }
             guard let hourlyCurrent = await WeatherData.shared.hourlyForecast(for: currentLocation) else { return }
             guard let daily = await WeatherData.shared.dailyForecastWithDates(for: currentLocation, startDate: startTimeDate(timeZoneIdentifier: timeZoneIdentifier), endDate: endDate(timeZoneIdentifier: timeZoneIdentifier)) else { return }

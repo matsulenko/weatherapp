@@ -103,7 +103,7 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         super.viewDidLoad()
         
         if isFromDeviceLocation {
-            Task.detached { [self] in
+            Task.detached(priority: .background) { [self] in
                 if CLLocationManager.locationServicesEnabled() {
                     locationManager.delegate = self
                     locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
@@ -130,7 +130,7 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     private func setTimeZoneIdentifier() {
-        Task.detached { [self] in
+        Task.detached(priority: .background) { [self] in
             do {
                 let placemarks = try await CLGeocoder().reverseGeocodeLocation(currentLocation!)
                 
@@ -140,7 +140,7 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
                         DispatchQueue.main.async {
                             self.timeZoneIdentifier = placemark.timeZone?.identifier
                         }
-                            
+                        
                     }
                 }
             } catch {
@@ -270,6 +270,8 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
             if currentLocation != nil && isEmpty == false {
                 refreshData(with: currentLocation!)
             }
+        } else {
+            tableView.reloadData()
         }
     }
     
@@ -377,12 +379,13 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     private func setup24Hours(location: CLLocation) {
         
         var isDark = true
-        Task.detached { [self] in
+        
+        Task.detached(priority: .utility) { [self] in
             guard let hourly = await WeatherData.shared.hourlyForecastWithDates(for: location, startDate: view.startTimeDate(timeZoneIdentifier: timeZoneIdentifier), endDate: view.endTimeDate(timeZoneIdentifier: timeZoneIdentifier)) else { return }
             guard let daily = await WeatherData.shared.dailyForecastWithDates(for: location, startDate: view.startTimeDate(timeZoneIdentifier: timeZoneIdentifier), endDate: view.endDate(timeZoneIdentifier: timeZoneIdentifier)) else { return }
             DispatchQueue.main.async { [self] in
                 var dataDailyTemp: [WeatherForecastDaily] = []
-
+                
                 for i: Int in 0..<daily.forecast.count {
                     
                     if view.getDateIndex(daily.forecast[i].date, timeZoneIdentifier: timeZoneIdentifier) < view.getDateIndex(Date(), timeZoneIdentifier: timeZoneIdentifier) {
@@ -390,6 +393,7 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
                     }
                     
                     var n: Int = 0
+                    
                     let date = view.dateToStringFull(daily.forecast[i].date, timeZoneIdentifier: timeZoneIdentifier)
                     let conditions = daily.forecast[i].condition
                     let rainProbability = Int(daily.forecast[i].precipitationChance * 100)
@@ -460,7 +464,7 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
                     } else {
                         isDark = false
                     }
-                                        
+                    
                     let forecast = WeatherForecastHourly(
                         date: date,
                         hours: hours,
@@ -479,7 +483,7 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
                     data24hoursMediumTemp.append(forecast)
                     i += 1
                 }
-
+                
                 if data24hoursMediumTemp.count >= 216 {
                     data24hoursMedium = data24hoursMediumTemp
                     for i in data24hoursMediumTemp {
@@ -494,16 +498,17 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
                 }
             }
         }
+        
     }
     
     private func setTimer() {
-        _ = Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true) { [self]
+        _ = Timer.scheduledTimer(withTimeInterval: 120.0, repeats: true) { [self]
             timer in
             
             if currentLocation != nil && isEmpty == false {
                 
                 if isFromDeviceLocation {
-                    Task.detached {
+                    Task.detached(priority: .utility) {
                         self.locationManager.startUpdatingLocation()
                     }
                 }

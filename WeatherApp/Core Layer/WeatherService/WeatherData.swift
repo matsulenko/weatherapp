@@ -22,7 +22,7 @@ final class WeatherData {
     init() {}
     
     func currentWeather(for location: CLLocation) async -> CurrentWeather? {
-        let currentWeather = await Task.detached(priority: .userInitiated) {
+        let currentWeather = await Task.detached(priority: .utility) {
             let forcast = try? await self.service.weather(for: location, including: .current)
             
             return forcast
@@ -32,7 +32,7 @@ final class WeatherData {
     }
     
     func hourlyForecast(for location: CLLocation) async -> Forecast<HourWeather>? {
-        let hourWeather = await Task.detached(priority: .userInitiated) {
+        let hourWeather = await Task.detached(priority: .utility) {
             let forcast = try? await self.service.weather(for: location, including: .hourly)
             
             return forcast
@@ -42,7 +42,7 @@ final class WeatherData {
     }
 
     func dailyForecast(for location: CLLocation) async -> Forecast<DayWeather>? {
-        let dayWeather = await Task.detached(priority: .userInitiated) {
+        let dayWeather = await Task.detached(priority: .utility) {
             let forcast = try? await self.service.weather(for: location, including: .daily)
             
             return forcast
@@ -52,7 +52,7 @@ final class WeatherData {
     }
     
     func minuteForecast(for location: CLLocation) async -> Forecast<MinuteWeather>? {
-        let minuteWeather = await Task.detached(priority: .userInitiated) {
+        let minuteWeather = await Task.detached(priority: .utility) {
             let forcast = try? await self.service.weather(for: location, including: .minute)
             
             return forcast
@@ -62,7 +62,7 @@ final class WeatherData {
     }
     
     func hourlyForecastWithDates(for location: CLLocation, startDate: Date, endDate: Date) async -> Forecast<HourWeather>? {
-        let hourWeather = await Task.detached(priority: .userInitiated) {
+        let hourWeather = await Task.detached(priority: .utility) {
             let forcast = try? await self.service.weather(for: location, including: .hourly(startDate: startDate, endDate: endDate))
             
             return forcast
@@ -72,7 +72,7 @@ final class WeatherData {
     }
     
     func dailyForecastWithDates(for location: CLLocation, startDate: Date, endDate: Date) async -> Forecast<DayWeather>? {
-        let dayWeather = await Task.detached(priority: .userInitiated) {
+        let dayWeather = await Task.detached(priority: .utility) {
             let forcast = try? await self.service.weather(for: location, including: .daily(startDate: startDate, endDate: endDate))
             
             return forcast
