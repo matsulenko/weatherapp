@@ -63,15 +63,15 @@ extension Date {
         dateFormatter.locale = getLocale()
         let updateTime = dateFormatter.date(from: timeString)!
         
-        if updateTime.timeIntervalSinceNow >= -600 {
+        if updateTime.timeIntervalSinceNow >= -720 {
             return "Обновлено сейчас"
         } else {
             if defaults.bool(forKey: "Time12") {
-                return timeAmPmLong(timeString, timeZoneIdentifier: timeZoneIdentifier).lowercased()
+                return timeAmPmLong(timeString, timeZoneIdentifier: Calendar.current.timeZone.identifier).lowercased()
             } else {
                 let dateFormatter24 = DateFormatter()
                 dateFormatter24.dateFormat = "HH:mm, E d MMMM"
-                dateFormatter24.timeZone = TimeZone(identifier: timeZoneIdentifier ?? Calendar.current.timeZone.identifier)
+                dateFormatter24.timeZone = TimeZone(identifier: Calendar.current.timeZone.identifier)
                 dateFormatter24.locale = getLocale()
                 
                 return dateFormatter24.string(from: updateTime).lowercased()
@@ -316,13 +316,18 @@ extension Date {
         return Calendar.current.date(byAdding: .hour, value: hours, to: date)!
     }
     
-    func fullDateAndDayWithOffset(offset: Int?, timeZoneIdentifier: String?) -> String {
-        let date = addDaysToStartTime(offset ?? 0, timeZoneIdentifier: timeZoneIdentifier)
+    func forecast24hoursTitle(dateString: String) -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "d MMMM (E)"
+        dateFormatter.dateFormat = "E dd/MM"
         dateFormatter.locale = getLocale()
         
-        return dateFormatter.string(from: date)
+        let date = dateFormatter.date(from: dateString)!
+        
+        let titleFormatter = DateFormatter()
+        titleFormatter.dateFormat = "d MMMM (E)"
+        titleFormatter.locale = getLocale()
+        
+        return titleFormatter.string(from: date)
     }
     
     func addDaysToStartTime(_ days: Int, timeZoneIdentifier: String?) -> Date {

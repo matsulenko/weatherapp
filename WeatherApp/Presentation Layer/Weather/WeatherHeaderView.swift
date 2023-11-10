@@ -149,7 +149,16 @@ extension WeatherHeaderView: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WeatherCollectionViewCell.id, for: indexPath) as! WeatherCollectionViewCell
         cell.timeZoneIdentifier = timeZoneIdentifier
         
-        let hourData = data24hoursMedium[indexPath.row + Date().getHours(Date(), timeZoneIdentifier: timeZoneIdentifier)]
+        var offset: Int = 0
+        let zeroHour = data24hoursMedium[3].hours
+        
+        if zeroHour == 2 {
+            offset = 1
+        } else if zeroHour == 4 {
+            offset = -1
+        }
+        
+        let hourData = data24hoursMedium[indexPath.row + Date().getHours(Date(), timeZoneIdentifier: timeZoneIdentifier) + offset]
         cell.setup(with: hourData)
         
         return cell

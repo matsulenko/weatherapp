@@ -114,7 +114,7 @@ final class Forecast24HoursViewController: UIViewController {
         if dayNumber == nil {
             return "Прогноз на 24 часа"
         } else {
-            return Date().fullDateAndDayWithOffset(offset: dayNumber, timeZoneIdentifier: timeZoneIdentifier).lowercased()
+            return Date().forecast24hoursTitle(dateString: data24hours[dayNumber! * 24 + 1].date).lowercased()
         }
     }
 }

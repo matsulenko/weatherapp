@@ -98,6 +98,10 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         super.viewDidLoad()
         
         if isFromDeviceLocation {
+            if locationName == nil && isEmpty == false {
+                locationName = "Текущее местоположение"
+            }
+            
             Task.detached(priority: .background) { [self] in
                 if CLLocationManager.locationServicesEnabled() {
                     locationManager.delegate = self
@@ -369,7 +373,7 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         
         Task.detached(priority: .utility) { [self] in
             guard let locationName = await locationName else { return }
-            guard let timeZoneIdentifier = await timeZoneIdentifier else { return }
+            let timeZoneIdentifier: String = await timeZoneIdentifier ?? defaultTimeZoneIdentifier
             
             let dataHourlyTemp = await WeatherLoad().loadHourlyWeather(location: location, locationName: locationName, timeZoneIdentifier: timeZoneIdentifier, sunriseHoursData: sunriseHours, sunsetHoursData: sunsetHours)
             let dataDailyTemp = await WeatherLoad().loadDailyWeather(location: location, locationName: locationName, timeZoneIdentifier: timeZoneIdentifier)
