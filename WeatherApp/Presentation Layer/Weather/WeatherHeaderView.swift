@@ -22,23 +22,9 @@ final class WeatherHeaderView: UIView {
     lazy var mainInfo: WeatherMainInfoView = {
         var view = WeatherMainInfoView(frame: .zero, currentLocation: currentLocation, locationName: locationName, timeZoneIdentifier: timeZoneIdentifier)
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.isUserInteractionEnabled = true
         
         return view
-    }()
-    
-    lazy var details24Hours: UIButton = {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.contentHorizontalAlignment = .right
-        button.setTitleColor(UIColor(named: "Text"), for: .normal)
-        button.titleLabel?.font = UIFont(name: "Rubik-Light_Regular", size: 16)
-        
-        let text = "Подробнее"
-        let attributedText = NSMutableAttributedString(string: text)
-        attributedText.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: NSRange(location: 0, length: text.count))
-        button.setAttributedTitle(attributedText, for: .normal)
-        
-        return button
     }()
     
     let collectionView: UICollectionView = {
@@ -90,7 +76,6 @@ final class WeatherHeaderView: UIView {
     
     private func addSubviews() {
         addSubview(mainInfo)
-        addSubview(details24Hours)
         addSubview(collectionView)
         addSubview(tableTitle)
     }
@@ -114,15 +99,12 @@ final class WeatherHeaderView: UIView {
             mainInfo.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 40),
             mainInfo.heightAnchor.constraint(equalToConstant: 212),
             
-            details24Hours.topAnchor.constraint(equalTo: mainInfo.bottomAnchor, constant: 15),
-            details24Hours.trailingAnchor.constraint(equalTo: mainInfo.trailingAnchor),
-            
-            collectionView.topAnchor.constraint(equalTo: details24Hours.bottomAnchor, constant: 15),
+            collectionView.topAnchor.constraint(equalTo: mainInfo.bottomAnchor, constant: 15),
             collectionView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
             collectionView.heightAnchor.constraint(equalToConstant: 85),
             
-            tableTitle.topAnchor.constraint(equalTo: details24Hours.bottomAnchor, constant: 120),
+            tableTitle.topAnchor.constraint(equalTo: mainInfo.bottomAnchor, constant: 120),
             tableTitle.centerXAnchor.constraint(equalTo: mainInfo.centerXAnchor),
             
             self.bottomAnchor.constraint(equalTo: tableTitle.bottomAnchor, constant: 9)

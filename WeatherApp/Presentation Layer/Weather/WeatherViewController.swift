@@ -83,6 +83,15 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         return tableView
     }()
     
+//    private lazy var spinner: UIActivityIndicatorView = {
+//        let spinner = UIActivityIndicatorView(style: .large)
+//        spinner.color = UIColor(named: "Text")
+//        spinner.translatesAutoresizingMaskIntoConstraints = false
+//        spinner.hidesWhenStopped = true
+//        
+//        return spinner
+//    }()
+    
     init(isFromDeviceLocation: Bool, currentLocation: CLLocation?, timeZoneIdentifier: String?) {
         self.isFromDeviceLocation = isFromDeviceLocation
         self.currentLocation = currentLocation
@@ -115,7 +124,7 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         addSubviews()
         setupView()
         setupConstraints()
-        
+                
         if currentLocation != nil {
             setupTable()
             setup24Hours(location: currentLocation!)
@@ -303,6 +312,7 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
             view.addSubview(plusButton)
         } else {
             view.addSubview(tableView)
+//            view.addSubview(spinner)
         }
     }
 
@@ -346,7 +356,10 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
                 tableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
                 tableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
                 tableView.topAnchor.constraint(equalTo: safeArea.topAnchor),
-                tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+                tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                
+//                spinner.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
+//                spinner.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor)
             ])
         }
     }
@@ -370,7 +383,7 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     private func setup24Hours(location: CLLocation) {
-        
+//        self.spinner.startAnimating()
         Task.detached(priority: .utility) { [self] in
             guard let locationName = await locationName else { return }
             let timeZoneIdentifier: String = await timeZoneIdentifier ?? defaultTimeZoneIdentifier
@@ -399,21 +412,25 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
                 
                 DispatchQueue.main.async { [self] in
                     if isEmpty == false {
+                        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.openDetails))
                         data24hoursMedium = dataHourlyTemp
                         (self.headerView as! WeatherHeaderView).data24hoursMedium = data24hoursMedium
                         (self.headerView as! WeatherHeaderView).reloadCollectionView()
-                        (self.headerView as! WeatherHeaderView).details24Hours.addTarget(self, action: #selector(self.openDetails), for: .touchUpInside)
+                        (self.headerView as! WeatherHeaderView).mainInfo.addGestureRecognizer(tapGesture)
                         updateTime = Date()
+//                        self.spinner.stopAnimating()
                     }
                 }
             } else if dataHourlyTemp.count >= 24 {
                 DispatchQueue.main.async { [self] in
                     if data24hoursMedium.count == 0 {
                         if isEmpty == false {
+                            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.openDetails))
                             data24hoursMedium = dataHourlyTemp
                             (self.headerView as! WeatherHeaderView).data24hoursMedium = data24hoursMedium
                             (self.headerView as! WeatherHeaderView).reloadCollectionView()
-                            (self.headerView as! WeatherHeaderView).details24Hours.addTarget(self, action: #selector(self.openDetails), for: .touchUpInside)
+                            (self.headerView as! WeatherHeaderView).mainInfo.addGestureRecognizer(tapGesture)
+//                            self.spinner.stopAnimating()
                         }
                     }
                 }
