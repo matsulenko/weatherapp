@@ -19,7 +19,7 @@ final class WeatherTableViewCell: UITableViewCell {
         label.font = UIFont(name: "Rubik-Light_Regular", size: 16)
         label.numberOfLines = 1
         label.textAlignment = .left
-        label.textColor = UIColor(named: "WeatherTableGray")
+        label.textColor = UIColor(named: "Text")
         
         return label
     }()
@@ -83,12 +83,12 @@ final class WeatherTableViewCell: UITableViewCell {
     }
     
     func configure(with weatherForecastShort: WeatherForecastDaily) {
-        dateLabel.text = fullToShort(weatherForecastShort.date, timeZoneIdentifier: timeZoneIdentifier).lowercased()
+        dateLabel.text = Date().fullToShort(weatherForecastShort.date, timeZoneIdentifier: timeZoneIdentifier).lowercased()
         rainProbabilityLabel.text = String(weatherForecastShort.rainProbability) + "%"
-        temperatureLabel.text = doubleToTemperature(temperatureFormat(weatherForecastShort.minTemperature)) + "/" + doubleToTemperature(temperatureFormat(weatherForecastShort.maxTemperature))
+        temperatureLabel.text = Date().doubleToTemperature(Date().temperatureFormat(weatherForecastShort.minTemperature)) + "/" + Date().doubleToTemperature(Date().temperatureFormat(weatherForecastShort.maxTemperature))
         
-        conditionsLabel.text = weatherCondition(weatherForecastShort.conditions)
-        conditionsImage.image = weatherConditionImage(condition: weatherForecastShort.conditions, isDark: false, isCurrent: false)
+        conditionsLabel.text = Date().weatherCondition(weatherForecastShort.conditions)
+        conditionsImage.image = Date().weatherConditionImage(condition: weatherForecastShort.conditions, isDark: false, isCurrent: false)
         conditionsImage.tintColor = UIColor(named: "MainChart")
     }
     

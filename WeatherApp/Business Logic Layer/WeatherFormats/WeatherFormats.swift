@@ -8,7 +8,7 @@
 import UIKit
 import WeatherKit
 
-extension UIView {
+extension Date {
     
     func getLocale() -> Locale {
         Locale(identifier: "ru_RU")
@@ -167,6 +167,15 @@ extension UIView {
         return dateFormatter.string(from: date)
     }
     
+    func stringToDateLong(_ dateString: String, timeZoneIdentifier: String?) -> Date {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm, E d MMMM yyyy"
+        dateFormatter.locale = getLocale()
+        dateFormatter.timeZone = TimeZone(identifier: timeZoneIdentifier ?? Calendar.current.timeZone.identifier)
+        
+        return dateFormatter.date(from: dateString) ?? Date()
+    }
+    
     func dateToStringShort(_ date: Date?, timeZoneIdentifier: String?) -> String {
         guard let date = date else { return "" }
         let dateFormatter = DateFormatter()
@@ -225,6 +234,18 @@ extension UIView {
         dateFormatter.timeZone = TimeZone(identifier: timeZoneIdentifier ?? Calendar.current.timeZone.identifier)
         
         return Int(dateFormatter.string(from: date))!
+    }
+    
+    func getHoursFromString(_ timeString: String) -> Int {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm"
+        
+        let date = dateFormatter.date(from: timeString)!
+        
+        let hoursDateFormatter = DateFormatter()
+        hoursDateFormatter.dateFormat = "H"
+        
+        return Int(hoursDateFormatter.string(from: date))!
     }
     
     func getDateIndex(_ date: Date, timeZoneIdentifier: String?) -> Int {
@@ -289,6 +310,10 @@ extension UIView {
         let startTime = startTimeDate(timeZoneIdentifier: timeZoneIdentifier)
         
         return Calendar.current.date(byAdding: .hour, value: hours, to: startTime)!
+    }
+    
+    func addHoursToDate(date: Date, hours: Int) -> Date {
+        return Calendar.current.date(byAdding: .hour, value: hours, to: date)!
     }
     
     func fullDateAndDayWithOffset(offset: Int?, timeZoneIdentifier: String?) -> String {

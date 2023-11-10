@@ -114,7 +114,7 @@ final class Forecast24HoursViewController: UIViewController {
         if dayNumber == nil {
             return "Прогноз на 24 часа"
         } else {
-            return view.fullDateAndDayWithOffset(offset: dayNumber, timeZoneIdentifier: timeZoneIdentifier).lowercased()
+            return Date().fullDateAndDayWithOffset(offset: dayNumber, timeZoneIdentifier: timeZoneIdentifier).lowercased()
         }
     }
 }
@@ -135,7 +135,7 @@ extension Forecast24HoursViewController: UITableViewDelegate, UITableViewDataSou
         var cellIndex = indexPath.row
         
         if dayNumber == nil {
-            cellIndex = 3 * indexPath.row + view.getHours(Date(), timeZoneIdentifier: timeZoneIdentifier)
+            cellIndex = 3 * indexPath.row + Date().getHours(Date(), timeZoneIdentifier: timeZoneIdentifier)
         } else {
             var offset: Int = 0
             let zeroHour = data24hours[dayNumber! * 24].hours

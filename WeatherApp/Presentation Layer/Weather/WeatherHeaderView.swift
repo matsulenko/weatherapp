@@ -16,9 +16,7 @@ final class WeatherHeaderView: UIView {
     private var timeZoneIdentifier: String?
     
     private var locationName: String
-    
-    private lazy var numberOfDays = 7
-    
+        
     var data24hoursMedium: [WeatherForecastHourly] = []
     
     lazy var mainInfo: WeatherMainInfoView = {
@@ -63,27 +61,12 @@ final class WeatherHeaderView: UIView {
         return collectionView
     }()
     
-    lazy var numberOfDaysButton: UIButton = {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.contentHorizontalAlignment = .right
-        button.setTitleColor(UIColor(named: "Text"), for: .normal)
-        button.titleLabel?.font = UIFont(name: "Rubik-Light_Regular", size: 16)
-        
-        let text = "\(WeatherOptions.shared.numberOfDays) дней"
-        let attributedText = NSMutableAttributedString(string: text)
-        attributedText.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: NSRange(location: 0, length: text.count))
-        button.setAttributedTitle(attributedText, for: .normal)
-        
-        return button
-    }()
-    
     private lazy var tableTitle: UILabel = {
         var label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "Rubik-Light_Medium", size: 18)
         label.numberOfLines = 1
-        label.textAlignment = .left
+        label.textAlignment = .center
         label.textColor = UIColor(named: "Text")
         label.text = "Ежедневный прогноз"
         
@@ -109,7 +92,6 @@ final class WeatherHeaderView: UIView {
         addSubview(mainInfo)
         addSubview(details24Hours)
         addSubview(collectionView)
-        addSubview(numberOfDaysButton)
         addSubview(tableTitle)
     }
     
@@ -140,24 +122,23 @@ final class WeatherHeaderView: UIView {
             collectionView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
             collectionView.heightAnchor.constraint(equalToConstant: 85),
             
-            numberOfDaysButton.topAnchor.constraint(equalTo: details24Hours.bottomAnchor, constant: 120),
-            numberOfDaysButton.trailingAnchor.constraint(equalTo: mainInfo.trailingAnchor),
+            tableTitle.topAnchor.constraint(equalTo: details24Hours.bottomAnchor, constant: 120),
+            tableTitle.centerXAnchor.constraint(equalTo: mainInfo.centerXAnchor),
             
-            tableTitle.centerYAnchor.constraint(equalTo: numberOfDaysButton.centerYAnchor),
-            tableTitle.leadingAnchor.constraint(equalTo: mainInfo.leadingAnchor),
-            
-            self.bottomAnchor.constraint(equalTo: numberOfDaysButton.bottomAnchor, constant: 9)
+            self.bottomAnchor.constraint(equalTo: tableTitle.bottomAnchor, constant: 9)
         ])
     }
     
     func reloadCollectionView() {
-        collectionView.reloadData()
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
     }
 }
 
 extension WeatherHeaderView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if data24hoursMedium.count < (24 + getHours(Date(), timeZoneIdentifier: timeZoneIdentifier)) {
+        if data24hoursMedium.count < (24 + Date().getHours(Date(), timeZoneIdentifier: timeZoneIdentifier)) {
             data24hoursMedium.count
         } else {
             24
@@ -168,7 +149,7 @@ extension WeatherHeaderView: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WeatherCollectionViewCell.id, for: indexPath) as! WeatherCollectionViewCell
         cell.timeZoneIdentifier = timeZoneIdentifier
         
-        let hourData = data24hoursMedium[indexPath.row + getHours(Date(), timeZoneIdentifier: timeZoneIdentifier)]
+        let hourData = data24hoursMedium[indexPath.row + Date().getHours(Date(), timeZoneIdentifier: timeZoneIdentifier)]
         cell.setup(with: hourData)
         
         return cell

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BC317A162AFD5A2C00CBC932 /* SkeletonView in Frameworks */ = {isa = PBXBuildFile; productRef = BC317A152AFD5A2C00CBC932 /* SkeletonView */; };
+		BC317A182AFD5C9500CBC932 /* WeatherLoad.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC317A172AFD5C9500CBC932 /* WeatherLoad.swift */; };
 		BC32C7B82AC609FC00AFB265 /* WeatherHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC32C7B72AC609FC00AFB265 /* WeatherHeaderView.swift */; };
 		BC32C7BA2AC6132700AFB265 /* SemiCircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC32C7B92AC6132700AFB265 /* SemiCircleView.swift */; };
 		BC32C7BC2AC64AC800AFB265 /* WeatherMainInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC32C7BB2AC64AC800AFB265 /* WeatherMainInfoView.swift */; };
@@ -63,6 +65,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		BC317A172AFD5C9500CBC932 /* WeatherLoad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherLoad.swift; sourceTree = "<group>"; };
 		BC32C7B72AC609FC00AFB265 /* WeatherHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherHeaderView.swift; sourceTree = "<group>"; };
 		BC32C7B92AC6132700AFB265 /* SemiCircleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemiCircleView.swift; sourceTree = "<group>"; };
 		BC32C7BB2AC64AC800AFB265 /* WeatherMainInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherMainInfoView.swift; sourceTree = "<group>"; };
@@ -110,6 +113,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC317A162AFD5A2C00CBC932 /* SkeletonView in Frameworks */,
 				BC85E4282AD3618F00E117F2 /* RealmSwift in Frameworks */,
 				BC85E4262AD3618F00E117F2 /* Realm in Frameworks */,
 				BCA8A2522ACB67BC000973F4 /* DGCharts in Frameworks */,
@@ -119,6 +123,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BC317A192AFD5CB200CBC932 /* WeatherLoad */ = {
+			isa = PBXGroup;
+			children = (
+				BC317A172AFD5C9500CBC932 /* WeatherLoad.swift */,
+			);
+			path = WeatherLoad;
+			sourceTree = "<group>";
+		};
 		BC37E33E2AC9EC250084B635 /* Forecast24Hours */ = {
 			isa = PBXGroup;
 			children = (
@@ -241,6 +253,7 @@
 		BCA263682AC2166D00E753FB /* Business Logic Layer */ = {
 			isa = PBXGroup;
 			children = (
+				BC317A192AFD5CB200CBC932 /* WeatherLoad */,
 				BC85E4392AD4682900E117F2 /* WeatherFormats */,
 				BC85E42C2AD36A2400E117F2 /* Realm */,
 			);
@@ -330,6 +343,7 @@
 				BCA8A2512ACB67BC000973F4 /* DGCharts */,
 				BC85E4252AD3618F00E117F2 /* Realm */,
 				BC85E4272AD3618F00E117F2 /* RealmSwift */,
+				BC317A152AFD5A2C00CBC932 /* SkeletonView */,
 			);
 			productName = WeatherApp;
 			productReference = BCA263412AC20D1800E753FB /* WeatherApp.app */;
@@ -362,6 +376,7 @@
 			packageReferences = (
 				BCA8A2502ACB67BC000973F4 /* XCRemoteSwiftPackageReference "Charts" */,
 				BC85E4242AD3618F00E117F2 /* XCRemoteSwiftPackageReference "realm-swift" */,
+				BC317A142AFD5A2C00CBC932 /* XCRemoteSwiftPackageReference "SkeletonView" */,
 			);
 			productRefGroup = BCA263422AC20D1800E753FB /* Products */;
 			projectDirPath = "";
@@ -419,6 +434,7 @@
 				BCA263472AC20D1800E753FB /* SceneDelegate.swift in Sources */,
 				BC38C5802AC7734B009A381B /* WeatherForecastDaily.swift in Sources */,
 				BC85E42E2AD36A4200E117F2 /* RealmService.swift in Sources */,
+				BC317A182AFD5C9500CBC932 /* WeatherLoad.swift in Sources */,
 				BCA8A2652ACF215F000973F4 /* SettingsButton.swift in Sources */,
 				BC85E41E2AD0D72B00E117F2 /* WeatherData.swift in Sources */,
 				BC85E4202AD0E09E00E117F2 /* WeatherFormats.swift in Sources */,
@@ -656,6 +672,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		BC317A142AFD5A2C00CBC932 /* XCRemoteSwiftPackageReference "SkeletonView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Juanpe/SkeletonView";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.30.4;
+			};
+		};
 		BC85E4242AD3618F00E117F2 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/realm-swift";
@@ -675,6 +699,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		BC317A152AFD5A2C00CBC932 /* SkeletonView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BC317A142AFD5A2C00CBC932 /* XCRemoteSwiftPackageReference "SkeletonView" */;
+			productName = SkeletonView;
+		};
 		BC85E4252AD3618F00E117F2 /* Realm */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = BC85E4242AD3618F00E117F2 /* XCRemoteSwiftPackageReference "realm-swift" */;

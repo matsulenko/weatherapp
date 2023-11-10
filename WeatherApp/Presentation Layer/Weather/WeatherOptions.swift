@@ -8,9 +8,7 @@
 import UIKit
 
 public final class WeatherOptions {
-    
-    public var numberOfDays: Int = 7
-    
+        
     public var doNotShowOnboarding = false
     
     public var settingsWereUpdated = false

@@ -85,14 +85,14 @@ final class ForecastCollectionViewCell: UICollectionViewCell {
             timeLabelText = String(hourData.hours) + ":00"
         }
         
-        timeLabel.text = timeFormatShort(timeLabelText)
+        timeLabel.text = Date().timeFormatShort(timeLabelText)
         
         let conditions = hourData.conditions
         let isDark = hourData.isDark
         
         rainProbabilitylabel.text = String(hourData.rainProbability) + "%"
         
-        conditionsImage.image = weatherConditionImage(condition: conditions, isDark: isDark, isCurrent: false)
+        conditionsImage.image = Date().weatherConditionImage(condition: conditions, isDark: isDark, isCurrent: false)
         conditionsImage.tintColor = UIColor(named: "MainChart")
     }
 }

@@ -12,27 +12,22 @@ import WeatherKit
 final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     
     let locationManager = CLLocationManager()
-    
     private let defaults = UserDefaults.standard
-    
     var currentLocation: CLLocation?
-    
     var timeZoneIdentifier: String?
-    
     let defaultTimeZoneIdentifier: String = Calendar.current.timeZone.identifier
-    
     var isFromDeviceLocation = false
-    
     private lazy var dataDaily: [WeatherForecastDaily] = []
-    
     private lazy var data24hoursMedium: [WeatherForecastHourly] = []
+    private var sunsetHours: Int?
+    private var sunriseHours: Int?
+    private var updateTime: Date?
     
     private lazy var headerView: UIView = {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.openDetails))
         
         guard let currentLocation = currentLocation else { return UIView() }
         let view = WeatherHeaderView(frame: .zero, currentLocation: currentLocation, locationName: locationName ?? "", timeZoneIdentifier: timeZoneIdentifier)
-        view.numberOfDaysButton.addTarget(self, action: #selector(changeNumberOfDays), for: .touchUpInside)
         view.collectionView.addGestureRecognizer(tapGesture)
         
         return view
@@ -184,11 +179,22 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
                 (self.headerView as! WeatherHeaderView).reloadCollectionView()
             }
             
+            if self.sunriseHours == nil && self.sunsetHours == nil {
+                let objects = realm.objects(WeatherForecastCurrentObject.self)
+                if let object = objects.last(where: { $0.locationName == locationName }) {
+                    let currentWeather = WeatherForecastCurrent(weatherForecastCurrentObject: object)
+                    if currentWeather.sunriseTimeString != "" {
+                        self.sunriseHours = Date().getHoursFromString(currentWeather.sunriseTimeString)
+                    }
+                    if currentWeather.sunsetTimeString != "" {
+                        self.sunsetHours = Date().getHoursFromString(currentWeather.sunsetTimeString)
+                    }
+                }
+            }
+            
         } catch {
             print(error.localizedDescription)
         }
-        
-        
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -225,6 +231,14 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     private func refreshData(with location: CLLocation) {
+        var skipUpdate = false
+        
+        if updateTime != nil {
+            if updateTime!.timeIntervalSinceNow >= -600 && Date().getHours(Date(), timeZoneIdentifier: nil) == Date().getHours(updateTime!, timeZoneIdentifier: nil) {
+                skipUpdate = true
+            }
+        }
+        
         if isEmpty == true {
             isEmpty = false
             addSubviews()
@@ -233,13 +247,18 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         }
         currentLocation = location
         (headerView as! WeatherHeaderView).updateCurrentLocation(location: location)
-        setup24Hours(location: location)
+        
+        if skipUpdate == false {
+            setup24Hours(location: location)
+        }
         if currentLocation != nil {
             setupTable()
         }
         tableView.reloadData()
         (headerView as! WeatherHeaderView).mainInfo.loadFromCache()
-        (headerView as! WeatherHeaderView).mainInfo.loadMainData()
+        if skipUpdate == false {
+            (headerView as! WeatherHeaderView).mainInfo.loadMainData()
+        }
         (headerView as! WeatherHeaderView).collectionView.reloadData()
     }
     
@@ -273,15 +292,6 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         } else {
             tableView.reloadData()
         }
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        if isEmpty == false {
-            updateNumberOfDays()
-        }
-        
     }
     
     private func addSubviews() {
@@ -348,18 +358,6 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     @objc
-    private func changeNumberOfDays() {
-        if WeatherOptions.shared.numberOfDays == 7 {
-            WeatherOptions.shared.numberOfDays = 10
-        } else {
-            WeatherOptions.shared.numberOfDays = 7
-        }
-        
-        updateNumberOfDays()
-        tableView.reloadData()
-    }
-    
-    @objc
     private func openDetails() {
 
         let targetViewController = Forecast24HoursViewController(locationName: locationName ?? "", data24hours: data24hoursMedium, timeZoneIdentifier: timeZoneIdentifier, dayNumber: nil)
@@ -367,138 +365,56 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         navigationController.pushViewController(targetViewController, animated: true)
     }
     
-    private func updateNumberOfDays() {
-        if isEmpty == false {
-            let text = "\(WeatherOptions.shared.numberOfDays) дней"
-            let attributedText = NSMutableAttributedString(string: text)
-            attributedText.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: NSRange(location: 0, length: text.count))
-            (headerView as! WeatherHeaderView).numberOfDaysButton.setAttributedTitle(attributedText, for: .normal)
-        }
-    }
-    
     private func setup24Hours(location: CLLocation) {
         
-        var isDark = true
-        
         Task.detached(priority: .utility) { [self] in
-            guard let hourly = await WeatherData.shared.hourlyForecastWithDates(for: location, startDate: view.startTimeDate(timeZoneIdentifier: timeZoneIdentifier), endDate: view.endTimeDate(timeZoneIdentifier: timeZoneIdentifier)) else { return }
-            guard let daily = await WeatherData.shared.dailyForecastWithDates(for: location, startDate: view.startTimeDate(timeZoneIdentifier: timeZoneIdentifier), endDate: view.endDate(timeZoneIdentifier: timeZoneIdentifier)) else { return }
-            DispatchQueue.main.async { [self] in
-                var dataDailyTemp: [WeatherForecastDaily] = []
+            guard let locationName = await locationName else { return }
+            guard let timeZoneIdentifier = await timeZoneIdentifier else { return }
+            
+            let dataHourlyTemp = await WeatherLoad().loadHourlyWeather(location: location, locationName: locationName, timeZoneIdentifier: timeZoneIdentifier, sunriseHoursData: sunriseHours, sunsetHoursData: sunsetHours)
+            let dataDailyTemp = await WeatherLoad().loadDailyWeather(location: location, locationName: locationName, timeZoneIdentifier: timeZoneIdentifier)
+                            
+            if dataDailyTemp.count >= 9 {
+                Task.detached { @MainActor in
+                    self.dataDaily = dataDailyTemp
+                }
+                for i in dataDailyTemp {
+                    RealmService().saveWeatherForecastDaily(i)
+                }
+            }
                 
-                for i: Int in 0..<daily.forecast.count {
-                    
-                    if view.getDateIndex(daily.forecast[i].date, timeZoneIdentifier: timeZoneIdentifier) < view.getDateIndex(Date(), timeZoneIdentifier: timeZoneIdentifier) {
-                        continue
-                    }
-                    
-                    var n: Int = 0
-                    
-                    let date = view.dateToStringFull(daily.forecast[i].date, timeZoneIdentifier: timeZoneIdentifier)
-                    let conditions = daily.forecast[i].condition
-                    let rainProbability = Int(daily.forecast[i].precipitationChance * 100)
-                    let minTemperature = daily.forecast[i].lowTemperature.value
-                    let maxTemperature = daily.forecast[i].highTemperature.value
-                    
-                    let weatherForecastDaily = WeatherForecastDaily(
-                        date: date,
-                        rainProbability: rainProbability,
-                        conditions: conditions,
-                        minTemperature: minTemperature,
-                        maxTemperature: maxTemperature,
-                        locationName: self.locationName,
-                        index: n
-                    )
-                    
-                    n += 1
-                    
-                    dataDailyTemp.append(weatherForecastDaily)
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+            
+            if dataHourlyTemp.count >= 216 {
+
+                for i in dataHourlyTemp {
+                    RealmService().saveWeatherForecastHourly(i)
                 }
                 
-                if dataDailyTemp.count >= 9 {
-                    dataDaily = dataDailyTemp
-                    for i in dataDailyTemp {
-                        RealmService().saveWeatherForecastDaily(i)
+                DispatchQueue.main.async { [self] in
+                    if isEmpty == false {
+                        data24hoursMedium = dataHourlyTemp
+                        (self.headerView as! WeatherHeaderView).data24hoursMedium = data24hoursMedium
+                        (self.headerView as! WeatherHeaderView).reloadCollectionView()
+                        (self.headerView as! WeatherHeaderView).details24Hours.addTarget(self, action: #selector(self.openDetails), for: .touchUpInside)
+                        updateTime = Date()
                     }
                 }
-                
-                tableView.reloadData()
-                
-                var sunriseHours: Int?
-                var sunsetHours: Int?
-                
-                if daily.forecast.first?.sun.sunrise != nil && daily.forecast.first?.sun.sunset != nil {
-                    sunriseHours = view.getHours(daily.forecast.first!.sun.sunrise!, timeZoneIdentifier: timeZoneIdentifier)
-                    sunsetHours = view.getHours(daily.forecast.first!.sun.sunset!, timeZoneIdentifier: timeZoneIdentifier)
-                }
-                
-                var data24hoursMediumTemp: [WeatherForecastHourly] = []
-                var i = 0
-                while i < hourly.forecast.count {
-                    let date = view.dateToStringMedium(hourly.forecast[i].date, timeZoneIdentifier: timeZoneIdentifier)
-                    let hours = view.getHours(hourly.forecast[i].date, timeZoneIdentifier: timeZoneIdentifier)
-                    let conditions = hourly.forecast[i].condition
-                    let temperature = hourly.forecast[i].temperature.value
-                    let feelTemperature = hourly.forecast[i].apparentTemperature.value
-                    let wind = hourly.forecast[i].wind.speed.converted(to: .metersPerSecond).value
-                    let windDirection = hourly.forecast[i].wind.compassDirection
-                    let rainProbability = Int(hourly.forecast[i].precipitationChance * 100)
-                    let cloudiness = Int(hourly.forecast[i].cloudCover * 100)
-                    
-                    if sunriseHours != nil && sunsetHours != nil {
-                        if sunsetHours! > sunriseHours! {
-                            if view.getHours(hourly.forecast[i].date, timeZoneIdentifier: timeZoneIdentifier) >= sunriseHours! && view.getHours(hourly.forecast[i].date, timeZoneIdentifier: timeZoneIdentifier) < sunsetHours! {
-                                isDark = false
-                            } else {
-                                isDark = true
-                            }
-                        } else {
-                            if view.getHours(hourly.forecast[i].date, timeZoneIdentifier: timeZoneIdentifier) >= sunriseHours! {
-                                isDark = false
-                            } else if view.getHours(hourly.forecast[i].date, timeZoneIdentifier: timeZoneIdentifier) < sunsetHours! {
-                                isDark = false
-                            } else {
-                                isDark = true
-                            }
+            } else if dataHourlyTemp.count >= 24 {
+                DispatchQueue.main.async { [self] in
+                    if data24hoursMedium.count == 0 {
+                        if isEmpty == false {
+                            data24hoursMedium = dataHourlyTemp
+                            (self.headerView as! WeatherHeaderView).data24hoursMedium = data24hoursMedium
+                            (self.headerView as! WeatherHeaderView).reloadCollectionView()
+                            (self.headerView as! WeatherHeaderView).details24Hours.addTarget(self, action: #selector(self.openDetails), for: .touchUpInside)
                         }
-                    } else {
-                        isDark = false
                     }
-                    
-                    let forecast = WeatherForecastHourly(
-                        date: date,
-                        hours: hours,
-                        conditions: conditions,
-                        temperature: temperature,
-                        feelTemperature: feelTemperature,
-                        wind: wind,
-                        windDirection: windDirection,
-                        rainProbability: rainProbability,
-                        cloudiness: cloudiness,
-                        isDark: isDark,
-                        locationName: self.locationName,
-                        index: i
-                    )
-                    
-                    data24hoursMediumTemp.append(forecast)
-                    i += 1
-                }
-                
-                if data24hoursMediumTemp.count >= 216 {
-                    data24hoursMedium = data24hoursMediumTemp
-                    for i in data24hoursMediumTemp {
-                        RealmService().saveWeatherForecastHourly(i)
-                    }
-                }
-                
-                if isEmpty == false && data24hoursMedium.count >= 216 {
-                    (self.headerView as! WeatherHeaderView).data24hoursMedium = self.data24hoursMedium
-                    (self.headerView as! WeatherHeaderView).reloadCollectionView()
-                    (self.headerView as! WeatherHeaderView).details24Hours.addTarget(self, action: #selector(self.openDetails), for: .touchUpInside)
                 }
             }
         }
-        
     }
     
     private func setTimer() {
@@ -526,11 +442,7 @@ extension WeatherViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        if dataDaily.count < WeatherOptions.shared.numberOfDays {
-            dataDaily.count
-        } else {
-            WeatherOptions.shared.numberOfDays
-        }
+        dataDaily.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -555,9 +467,11 @@ extension WeatherViewController: UITableViewDelegate, UITableViewDataSource {
                 if self.tableView.cellForRow(at: swipedIndexPath) != nil {
                     let dayNumber = swipedIndexPath.section
                     
+                    if data24hoursMedium.count >= (dayNumber + 1) * 24 {
                     let targetViewController = Forecast24HoursViewController(locationName: locationName ?? "", data24hours: data24hoursMedium, timeZoneIdentifier: timeZoneIdentifier, dayNumber: dayNumber)
                     guard let navigationController = self.navigationController else { return }
-                    navigationController.pushViewController(targetViewController, animated: true)
+                        navigationController.pushViewController(targetViewController, animated: true)
+                    }
                 }
             }
         }

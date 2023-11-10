@@ -338,8 +338,6 @@ extension WeatherPageViewController: UIPageViewControllerDataSource, UIPageViewC
                     guard let locationToDelete = currentViewController.locationName else { return }
                     RealmService().deleteLocation(locationToDelete)
                 }
-            } else {
-                print("!>KJDDSFJSKFJ")
             }
         }
     }

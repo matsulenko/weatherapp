@@ -73,7 +73,7 @@ final class Forecast24HoursHeaderView: UIView {
             var indexY = i
             
             if dayNumber == nil {
-                indexY = 3 * i + getHours(Date(), timeZoneIdentifier: timeZoneIdentifier)
+                indexY = 3 * i + Date().getHours(Date(), timeZoneIdentifier: timeZoneIdentifier)
             } else {
                 var offset: Int = 0
                 let zeroHour = data24hours[dayNumber! * 24].hours
@@ -317,7 +317,7 @@ extension Forecast24HoursHeaderView: UICollectionViewDataSource {
         var cellIndex = indexPath.row
         
         if dayNumber == nil {
-            cellIndex = 3 * indexPath.row + getHours(Date(), timeZoneIdentifier: timeZoneIdentifier)
+            cellIndex = 3 * indexPath.row + Date().getHours(Date(), timeZoneIdentifier: timeZoneIdentifier)
         } else {
             var offset: Int = 0
             let zeroHour = data24hours[dayNumber! * 24].hours

@@ -224,28 +224,10 @@ final class WeatherMainInfoView: UIView {
     
     public func loadMainData() {
         Task.detached(priority: .utility) { [self] in
-            guard let current = await WeatherData.shared.currentWeather(for: currentLocation) else { return }
-            guard let hourlyCurrent = await WeatherData.shared.hourlyForecast(for: currentLocation) else { return }
-            guard let daily = await WeatherData.shared.dailyForecastWithDates(for: currentLocation, startDate: startTimeDate(timeZoneIdentifier: timeZoneIdentifier), endDate: endDate(timeZoneIdentifier: timeZoneIdentifier)) else { return }
-            
-            DispatchQueue.main.async { [self] in
-                guard let dailyForecast = daily.forecast.first else { return }
-                let currentWeather = WeatherForecastCurrent(
-                    locationName: locationName,
-                    updateTimeString: dateToStringLong(current.date, timeZoneIdentifier: timeZoneIdentifier),
-                    temperature: current.temperature.value,
-                    currentConditions: weatherCondition(current.condition),
-                    precipitationIntensity: current.precipitationIntensity.value,
-                    weatherSpeed: current.wind.speed.converted(to: .metersPerSecond).value,
-                    precipitationChance: hourlyCurrent.forecast[0].precipitationChance,
-                    lowTemperature: daily.forecast.first!.lowTemperature.value,
-                    highTemperature: daily.forecast.first!.highTemperature.value,
-                    sunriseTimeString: dateToStringTime(dailyForecast.sun.sunrise, timeZoneIdentifier: timeZoneIdentifier),
-                    sunsetTimeString: dateToStringTime(dailyForecast.sun.sunset, timeZoneIdentifier: timeZoneIdentifier)
-                )
-                
-                updateLabels(currentWeather: currentWeather)
-                
+            if let currentWeather = await WeatherLoad().loadCurrentWeather(currentLocation: currentLocation, locationName: locationName, timeZoneIdentifier: timeZoneIdentifier ?? Calendar.current.timeZone.identifier) {
+                DispatchQueue.main.async { [self] in
+                    updateLabels(currentWeather: currentWeather)
+                }
                 RealmService().saveWeatherForecastCurrent(currentWeather)
             }
         }
@@ -264,18 +246,18 @@ final class WeatherMainInfoView: UIView {
     }
     
     private func updateLabels(currentWeather: WeatherForecastCurrent) {
-        updateTime.text = timeFormatLong(currentWeather.updateTimeString, timeZoneIdentifier: timeZoneIdentifier)
-        currentTemp.text = doubleToTemperature(temperatureFormat(currentWeather.temperature))
+        updateTime.text = Date().timeFormatLong(currentWeather.updateTimeString, timeZoneIdentifier: timeZoneIdentifier)
+        currentTemp.text = Date().doubleToTemperature(Date().temperatureFormat(currentWeather.temperature))
         currentConditions.text = currentWeather.currentConditions
-        currentPrecipitationLevel.text = doubleToString(currentWeather.precipitationIntensity)
-        currentWindLevel.text = "\(doubleToString(windFormat(currentWeather.weatherSpeed))) \(windSuffixMain())"
-        currentRainProbability.text = doubleToString(currentWeather.precipitationChance*100) + "%"
-        nightAndDayTemp.text = doubleToTemperature(temperatureFormat(currentWeather.lowTemperature)) + "/" + doubleToTemperature(temperatureFormat(currentWeather.highTemperature))
+        currentPrecipitationLevel.text = Date().doubleToString(currentWeather.precipitationIntensity)
+        currentWindLevel.text = "\(Date().doubleToString(Date().windFormat(currentWeather.weatherSpeed))) \(Date().windSuffixMain())"
+        currentRainProbability.text = Date().doubleToString(currentWeather.precipitationChance*100) + "%"
+        nightAndDayTemp.text = Date().doubleToTemperature(Date().temperatureFormat(currentWeather.lowTemperature)) + "/" + Date().doubleToTemperature(Date().temperatureFormat(currentWeather.highTemperature))
         if currentWeather.sunriseTimeString != "" {
-            sunriseTime.text = timeFormat(currentWeather.sunriseTimeString)
+            sunriseTime.text = Date().timeFormat(currentWeather.sunriseTimeString)
         }
         if currentWeather.sunsetTimeString != "" {
-            sunsetTime.text = timeFormat(currentWeather.sunsetTimeString)
+            sunsetTime.text = Date().timeFormat(currentWeather.sunsetTimeString)
         }
     }
     

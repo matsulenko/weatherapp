@@ -313,7 +313,7 @@ final class ForecastTableViewCell: UITableViewCell {
     }
     
     func configure(with weatherForecastMedium: WeatherForecastHourly) {
-        temperatureLabel.text = doubleToTemperature(temperatureFormat(weatherForecastMedium.temperature))
+        temperatureLabel.text = Date().doubleToTemperature(Date().temperatureFormat(weatherForecastMedium.temperature))
         precipitationValueLabel.text = String(weatherForecastMedium.rainProbability) + "%"
         cloudinessValueLabel.text = String(weatherForecastMedium.cloudiness) + "%"
         
@@ -325,17 +325,17 @@ final class ForecastTableViewCell: UITableViewCell {
             timeLabelText = String(weatherForecastMedium.hours) + ":00"
         }
         
-        timeLabel.text = timeFormatShort(timeLabelText)
+        timeLabel.text = Date().timeFormatShort(timeLabelText)
         
-        let conditions = weatherCondition(weatherForecastMedium.conditions)
+        let conditions = Date().weatherCondition(weatherForecastMedium.conditions)
         
         conditionsLabel.text = conditions
                 
-        windValueLabel.text = "\(doubleToString(windFormat(weatherForecastMedium.wind))) \(windSuffixTable()) \(windDirectionText(weatherForecastMedium.windDirection))"
+        windValueLabel.text = "\(Date().doubleToString(Date().windFormat(weatherForecastMedium.wind))) \(Date().windSuffixTable()) \(Date().windDirectionText(weatherForecastMedium.windDirection))"
         
-        feeltemperatureValueLabel.text = doubleToTemperature(temperatureFormat(weatherForecastMedium.feelTemperature))
+        feeltemperatureValueLabel.text = Date().doubleToTemperature(Date().temperatureFormat(weatherForecastMedium.feelTemperature))
         
-        conditionsImage.image = weatherConditionImage(condition: weatherForecastMedium.conditions, isDark: weatherForecastMedium.isDark, isCurrent: false)
+        conditionsImage.image = Date().weatherConditionImage(condition: weatherForecastMedium.conditions, isDark: weatherForecastMedium.isDark, isCurrent: false)
         conditionsImage.tintColor = UIColor(named: "MainChart")
     }
 }
