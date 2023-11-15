@@ -199,7 +199,6 @@ final class Forecast24HoursHeaderView: UIView {
         }
         
         chart.translatesAutoresizingMaskIntoConstraints = false
-//        chart.backgroundColor = UIColor(named: "VeryLightBlue")
         chart.isUserInteractionEnabled = false
         
         return chart

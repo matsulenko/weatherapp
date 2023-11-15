@@ -17,7 +17,7 @@ final class WeatherFooterView: UIView {
         button.setTitleColor(.systemRed, for: .normal)
         button.titleLabel?.font = UIFont(name: "Rubik-Light_Regular", size: 16)
         
-        let text = "Удалить"
+        let text = "Delete".localized
         let attributedText = NSMutableAttributedString(string: text)
         attributedText.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: NSRange(location: 0, length: text.count))
         button.setAttributedTitle(attributedText, for: .normal)

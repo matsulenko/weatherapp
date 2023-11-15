@@ -11,7 +11,11 @@ import WeatherKit
 extension Date {
     
     func getLocale() -> Locale {
-        Locale(identifier: "ru_RU")
+        if Locale.current.language.languageCode?.identifier == "ru" {
+            Locale(identifier: "ru_RU")
+        } else {
+            Locale(identifier: "en")
+        }
     }
     
     func temperatureFormat(_ temperature: Double) -> Double {
@@ -60,21 +64,31 @@ extension Date {
         let dateFormatter = DateFormatter()
         dateFormatter.timeZone = TimeZone(identifier: timeZoneIdentifier ?? Calendar.current.timeZone.identifier)
         dateFormatter.dateFormat = "HH:mm, E d MMMM yyyy"
-        dateFormatter.locale = getLocale()
+        dateFormatter.locale = Locale(identifier: "ru_RU")
         let updateTime = dateFormatter.date(from: timeString)!
         
         if updateTime.timeIntervalSinceNow >= -720 {
-            return "Обновлено сейчас"
+            return "Updated now".localized
         } else {
             if defaults.bool(forKey: "Time12") {
-                return timeAmPmLong(timeString, timeZoneIdentifier: Calendar.current.timeZone.identifier).lowercased()
+                let text = timeAmPmLong(timeString, timeZoneIdentifier: Calendar.current.timeZone.identifier)
+                if Locale.current.language.languageCode?.identifier == "ru" {
+                    return text.lowercased()
+                } else {
+                    return text
+                }
             } else {
                 let dateFormatter24 = DateFormatter()
                 dateFormatter24.dateFormat = "HH:mm, E d MMMM"
                 dateFormatter24.timeZone = TimeZone(identifier: Calendar.current.timeZone.identifier)
                 dateFormatter24.locale = getLocale()
+                let text = dateFormatter24.string(from: updateTime)
                 
-                return dateFormatter24.string(from: updateTime).lowercased()
+                if Locale.current.language.languageCode?.identifier == "ru" {
+                    return text.lowercased()
+                } else {
+                    return text
+                }
             }
         }
     }
@@ -83,9 +97,9 @@ extension Date {
         let defaults = UserDefaults.standard
         
         if defaults.bool(forKey: "WindSpeedInMi") {
-            return "ми\\ч"
+            return "MPH".localized
         } else {
-            return "м\\с"
+            return "m/s".localized
         }
     }
     
@@ -93,9 +107,9 @@ extension Date {
         let defaults = UserDefaults.standard
         
         if defaults.bool(forKey: "WindSpeedInMi") {
-            return "mph"
+            return "MPH".localized
         } else {
-            return "m/s"
+            return "m/s".localized
         }
     }
     
@@ -135,7 +149,7 @@ extension Date {
         let dateFormatter24 = DateFormatter()
         dateFormatter24.dateFormat = "HH:mm, E d MMMM yyyy"
         dateFormatter24.timeZone = TimeZone(identifier: timeZoneIdentifier ?? Calendar.current.timeZone.identifier)
-        dateFormatter24.locale = getLocale()
+        dateFormatter24.locale = Locale(identifier: "ru_RU")
         
         let time = dateFormatter24.date(from: twentyFourFormat)!
         
@@ -161,7 +175,7 @@ extension Date {
         guard let date = date else { return "" }
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "HH:mm, E d MMMM yyyy"
-        dateFormatter.locale = getLocale()
+        dateFormatter.locale = Locale(identifier: "ru_RU")
         dateFormatter.timeZone = TimeZone(identifier: timeZoneIdentifier ?? Calendar.current.timeZone.identifier)
         
         return dateFormatter.string(from: date)
@@ -170,7 +184,7 @@ extension Date {
     func stringToDateLong(_ dateString: String, timeZoneIdentifier: String?) -> Date {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "HH:mm, E d MMMM yyyy"
-        dateFormatter.locale = getLocale()
+        dateFormatter.locale = Locale(identifier: "ru_RU")
         dateFormatter.timeZone = TimeZone(identifier: timeZoneIdentifier ?? Calendar.current.timeZone.identifier)
         
         return dateFormatter.date(from: dateString) ?? Date()
@@ -192,8 +206,13 @@ extension Date {
         dateFormatter.dateFormat = "E dd/MM"
         dateFormatter.locale = getLocale()
         dateFormatter.timeZone = TimeZone(identifier: timeZoneIdentifier ?? Calendar.current.timeZone.identifier)
+        let text = dateFormatter.string(from: date).lowercased()
         
-        return dateFormatter.string(from: date).lowercased()
+        if Locale.current.language.languageCode?.identifier == "ru" {
+            return text.lowercased()
+        } else {
+            return text
+        }
     }
     
     func fullToShort(_ dateString: String?, timeZoneIdentifier: String?) -> String {
@@ -324,7 +343,11 @@ extension Date {
         let date = dateFormatter.date(from: dateString)!
         
         let titleFormatter = DateFormatter()
-        titleFormatter.dateFormat = "d MMMM (E)"
+        if Locale.current.language.languageCode?.identifier == "ru" {
+            titleFormatter.dateFormat = "d MMMM (E)"
+        } else {
+            titleFormatter.dateFormat = "MMMM, d (E)"
+        }
         titleFormatter.locale = getLocale()
         
         return titleFormatter.string(from: date)
@@ -352,110 +375,110 @@ extension Date {
     func windDirectionText(_ windDirection: Wind.CompassDirection) -> String {
         switch windDirection {
         case .north:
-            "С"
+            "N".localized
         case .northNortheast:
-            "ССВ"
+            "NNE".localized
         case .northeast:
-            "СВ"
+            "NE".localized
         case .eastNortheast:
-            "ВСВ"
+            "ENE".localized
         case .east:
-            "В"
+            "E".localized
         case .eastSoutheast:
-            "ВЮВ"
+            "ESE".localized
         case .southeast:
-            "ЮВ"
+            "SE".localized
         case .southSoutheast:
-            "ЮЮВ"
+            "SSE".localized
         case .south:
-            "Ю"
+            "S".localized
         case .southSouthwest:
-            "ЮЮЗ"
+            "SSW".localized
         case .southwest:
-            "ЮЗ"
+            "SW".localized
         case .westSouthwest:
-            "ЗЮЗ"
+            "WSW".localized
         case .west:
-            "З"
+            "W".localized
         case .westNorthwest:
-            "ЗСЗ"
+            "WNW".localized
         case .northwest:
-            "СЗ"
+            "NW".localized
         case .northNorthwest:
-            "ССЗ"
+            "NNW".localized
         }
     }
     
     func weatherCondition(_ condition: WeatherCondition) -> String {
         switch condition {
         case .blizzard:
-            "Метель"
+            "Blizzard".localized
         case .blowingDust:
-            "Песчаная буря"
+            "Blowing dust".localized
         case .blowingSnow:
-            "Снежная буря"
+            "Blowing snow".localized
         case .breezy:
-            "Свежесть"
+            "Breezy".localized
         case .clear:
-            "Ясно"
+            "Clear".localized
         case .cloudy:
-            "Облачно"
+            "Cloudy".localized
         case .drizzle:
-            "Моросящий дождь"
+            "Drizzle".localized
         case .flurries:
-            "Шквалы"
+            "Flurries".localized
         case .foggy:
-            "Туман"
+            "Foggy".localized
         case .freezingDrizzle:
-            "Моросящий ледяной дождь"
+            "Freezing drizzle".localized
         case .freezingRain:
-            "Ледяной дождь"
+            "Freezing rain".localized
         case .frigid:
-            "Холод"
+            "Frigid".localized
         case .hail:
-            "Град"
+            "Hail".localized
         case .haze:
-            "Лёгкий туман"
+            "Haze".localized
         case .heavyRain:
-            "Ливень"
+            "Heavy rain".localized
         case .heavySnow:
-            "Снегопад"
+            "Heavy snow".localized
         case .hot:
-            "Жара"
+            "Hot".localized
         case .hurricane:
-            "Ураган"
+            "Hurricane".localized
         case .isolatedThunderstorms:
-            "Местами грозы"
+            "Isolated thunderstorms".localized
         case .mostlyClear:
-            "Преимущественно ясно"
+            "Mostly clear".localized
         case .mostlyCloudy:
-            "Преимущественно облачно"
+            "Mostly cloudy".localized
         case .partlyCloudy:
-            "Переменная облачность"
+            "Partly cloudy".localized
         case .rain:
-            "Дождь"
+            "Rain".localized
         case .scatteredThunderstorms:
-            "Возможны грозы"
+            "Scattered thunderstorms".localized
         case .sleet:
-            "Мокрый снег"
+            "Sleet".localized
         case .smoky:
-            "Дымка"
+            "Smoky".localized
         case .snow:
-            "Снег"
+            "Snow".localized
         case .strongStorms:
-            "Сильные штормы"
+            "Strong storms".localized
         case .sunFlurries:
-            "Солнечные шквалы"
+            "Sun flurries".localized
         case .sunShowers:
-            "Грибной дождь"
+            "Sun showers".localized
         case .thunderstorms:
-            "Гроза"
+            "Thunderstorms".localized
         case .tropicalStorm:
-            "Тропическая буря"
+            "Tropical storm".localized
         case .windy:
-            "Ветрено"
+            "Windy".localized
         case .wintryMix:
-            "Дождь со снегом"
+            "Wintry mix".localized
         @unknown default:
             ""
         }

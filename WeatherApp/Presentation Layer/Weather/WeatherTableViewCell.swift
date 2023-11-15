@@ -83,7 +83,12 @@ final class WeatherTableViewCell: UITableViewCell {
     }
     
     func configure(with weatherForecastShort: WeatherForecastDaily) {
-        dateLabel.text = Date().fullToShort(weatherForecastShort.date, timeZoneIdentifier: timeZoneIdentifier).lowercased()
+        let dateLabelText = Date().fullToShort(weatherForecastShort.date, timeZoneIdentifier: timeZoneIdentifier)
+        if Locale.current.language.languageCode?.identifier == "ru" {
+            dateLabel.text = dateLabelText.lowercased()
+        } else {
+            dateLabel.text = dateLabelText
+        }
         rainProbabilityLabel.text = String(weatherForecastShort.rainProbability) + "%"
         temperatureLabel.text = Date().doubleToTemperature(Date().temperatureFormat(weatherForecastShort.minTemperature)) + "/" + Date().doubleToTemperature(Date().temperatureFormat(weatherForecastShort.maxTemperature))
         
@@ -108,7 +113,7 @@ final class WeatherTableViewCell: UITableViewCell {
         NSLayoutConstraint.activate([
             dateLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 6),
             dateLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 10),
-            dateLabel.widthAnchor.constraint(equalToConstant: 53),
+            dateLabel.widthAnchor.constraint(equalToConstant: 65),
             
             conditionsImage.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 5),
             conditionsImage.leftAnchor.constraint(equalTo: dateLabel.leftAnchor),
@@ -121,7 +126,7 @@ final class WeatherTableViewCell: UITableViewCell {
             
             conditionsLabel.rightAnchor.constraint(equalTo: temperatureLabel.leftAnchor),
             conditionsLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            conditionsLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 66),
+            conditionsLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 75),
             
             temperatureLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             temperatureLabel.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -10),

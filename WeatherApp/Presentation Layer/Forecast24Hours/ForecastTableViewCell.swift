@@ -100,7 +100,7 @@ final class ForecastTableViewCell: UITableViewCell {
         label.textAlignment = .left
         label.textColor = UIColor(named: "Text")
         label.lineBreakMode = .byTruncatingMiddle
-        label.text = "Ветер"
+        label.text = "Wind".localized
         
         return label
     }()
@@ -113,7 +113,7 @@ final class ForecastTableViewCell: UITableViewCell {
         label.textAlignment = .left
         label.textColor = UIColor(named: "Text")
         label.lineBreakMode = .byTruncatingMiddle
-        label.text = "Атмосферные осадки"
+        label.text = "Precipitation".localized
         
         return label
     }()
@@ -126,7 +126,7 @@ final class ForecastTableViewCell: UITableViewCell {
         label.textAlignment = .left
         label.textColor = UIColor(named: "Text")
         label.lineBreakMode = .byTruncatingMiddle
-        label.text = "Облачность"
+        label.text = "Cloudiness".localized
         
         return label
     }()
@@ -175,7 +175,7 @@ final class ForecastTableViewCell: UITableViewCell {
         label.textAlignment = .left
         label.textColor = UIColor(named: "Text")
         label.lineBreakMode = .byTruncatingMiddle
-        label.text = "Ощущается как"
+        label.text = "Feels like".localized
         
         return label
     }()

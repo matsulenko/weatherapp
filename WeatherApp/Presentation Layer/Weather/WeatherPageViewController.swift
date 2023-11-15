@@ -63,7 +63,7 @@ final class WeatherPageViewController: UIPageViewController {
             let realm = try Realm()
             let objects = realm.objects(LocationObject.self)
             for i in objects{
-                if i.name == "Текущее местоположение" {
+                if i.name == "Current location" || i.name == "Текущее местоположение" {
                     if locationManager.authorizationStatus == .authorizedWhenInUse || locationManager.authorizationStatus == .authorizedAlways {
                         let newVC = WeatherViewController(isFromDeviceLocation: true, currentLocation: CLLocation(latitude: i.latitude, longitude: i.longitude), timeZoneIdentifier: i.timeZoneIdentifier)
                         newVC.locationName = i.name
@@ -167,16 +167,16 @@ final class WeatherPageViewController: UIPageViewController {
     
     @objc
     private func chooseLocation() {
-        let alert = UIAlertController(title: "Добавить город", message: "", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Add new location".localized, message: "", preferredStyle: .alert)
         
         alert.addTextField { (textField : UITextField!) -> Void in
-            textField.placeholder = "Название города"
+            textField.placeholder = "Location name".localized
             textField.autocapitalizationType = .words
         }
         
         alert.addAction(
             UIAlertAction(
-                title: "Отмена",
+                title: "Cancel".localized,
                 style: .cancel,
                 handler: nil
             )
@@ -184,7 +184,7 @@ final class WeatherPageViewController: UIPageViewController {
 
         alert.addAction(
             UIAlertAction(
-                title: "Ок",
+                title: "Ok".localized,
                 style: .default,
                 handler: { [weak alert] _ in
                     guard let alert = alert, let textField = alert.textFields?.first else { return }
@@ -298,7 +298,7 @@ extension WeatherPageViewController: UIPageViewControllerDataSource, UIPageViewC
             RealmService().deleteLocation(locationToDelete)
             
             pages.remove(at: 0)
-            title = "Добавить новую локацию"
+            title = "Add new location".localized
         }
         
         guard let nextViewController = self.dataSource?.pageViewController( self, viewControllerAfter: currentViewController) else { return }
@@ -355,7 +355,7 @@ extension WeatherPageViewController: CLLocationManagerDelegate {
             do {
                 let realm = try Realm()
                 let objects = realm.objects(LocationObject.self)
-                if let ifFromDeviceLocationVC = objects.first(where: {$0.name == "Текущее местоположение"}) {
+                if let ifFromDeviceLocationVC = objects.first(where: {$0.name == "Текущее местоположение" || $0.name == "Current location"}) {
                     let newVC = WeatherViewController(isFromDeviceLocation: true, currentLocation: CLLocation(latitude: ifFromDeviceLocationVC.latitude, longitude: ifFromDeviceLocationVC.longitude), timeZoneIdentifier: ifFromDeviceLocationVC.timeZoneIdentifier)
                     newVC.locationName = ifFromDeviceLocationVC.name
                     pages.insert(newVC, at: 0)

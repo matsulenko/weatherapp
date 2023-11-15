@@ -30,6 +30,9 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         let view = WeatherHeaderView(frame: .zero, currentLocation: currentLocation, locationName: locationName ?? "", timeZoneIdentifier: timeZoneIdentifier)
         view.collectionView.addGestureRecognizer(tapGesture)
         
+        let tapGestureMain = UITapGestureRecognizer(target: self, action: #selector(self.openDetails))
+        view.mainInfo.addGestureRecognizer(tapGestureMain)
+        
         return view
     }()
     
@@ -108,7 +111,7 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         
         if isFromDeviceLocation {
             if locationName == nil && isEmpty == false {
-                locationName = "Текущее местоположение"
+                locationName = "Current location".localized
             }
             
             Task.detached(priority: .background) { [self] in
@@ -220,13 +223,13 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
             
             let latitude = location.coordinate.latitude
             let longitude = location.coordinate.longitude
-            let name = "Текущее местоположение"
+            let name = "Current location".localized
             
             if locationName == nil {
                 locationName = name
             }
             
-            if title != "Текущее местоположение" {
+            if title != "Текущее местоположение" && title != "Current location" {
                 setTitle()
             }
             
@@ -293,7 +296,7 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         }
         
         if isEmpty {
-            title = "Добавить новую локацию"
+            title = "Add new location".localized
         } else {
             setTitle()
         }
@@ -412,11 +415,9 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
                 
                 DispatchQueue.main.async { [self] in
                     if isEmpty == false {
-                        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.openDetails))
                         data24hoursMedium = dataHourlyTemp
                         (self.headerView as! WeatherHeaderView).data24hoursMedium = data24hoursMedium
                         (self.headerView as! WeatherHeaderView).reloadCollectionView()
-                        (self.headerView as! WeatherHeaderView).mainInfo.addGestureRecognizer(tapGesture)
                         updateTime = Date()
 //                        self.spinner.stopAnimating()
                     }
@@ -425,11 +426,9 @@ final class WeatherViewController: UIViewController, CLLocationManagerDelegate {
                 DispatchQueue.main.async { [self] in
                     if data24hoursMedium.count == 0 {
                         if isEmpty == false {
-                            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.openDetails))
                             data24hoursMedium = dataHourlyTemp
                             (self.headerView as! WeatherHeaderView).data24hoursMedium = data24hoursMedium
                             (self.headerView as! WeatherHeaderView).reloadCollectionView()
-                            (self.headerView as! WeatherHeaderView).mainInfo.addGestureRecognizer(tapGesture)
 //                            self.spinner.stopAnimating()
                         }
                     }

@@ -54,7 +54,7 @@ final class WeatherHeaderView: UIView {
         label.numberOfLines = 1
         label.textAlignment = .center
         label.textColor = UIColor(named: "Text")
-        label.text = "Ежедневный прогноз"
+        label.text = "Daily forecast".localized
         
         return label
     }()

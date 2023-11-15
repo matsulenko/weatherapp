@@ -176,10 +176,19 @@ final class WeatherMainInfoView: UIView {
         label.numberOfLines = 1
         label.textAlignment = .center
         label.textColor = UIColor(named: "MainInfoYellow")
-        label.text = "Идёт загрузка"
+        label.text = "Loading".localized
         
         return label
     }()
+    
+        private lazy var spinner: UIActivityIndicatorView = {
+            let spinner = UIActivityIndicatorView(style: .medium)
+            spinner.color = .white
+            spinner.translatesAutoresizingMaskIntoConstraints = false
+            spinner.hidesWhenStopped = true
+    
+            return spinner
+        }()
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -213,6 +222,7 @@ final class WeatherMainInfoView: UIView {
         addSubview(sunsetImage)
         addSubview(sunsetTime)
         addSubview(updateTime)
+        addSubview(spinner)
     }
     
     private func setupView() {
@@ -223,6 +233,7 @@ final class WeatherMainInfoView: UIView {
     }
     
     public func loadMainData() {
+        self.spinner.startAnimating()
         Task.detached(priority: .utility) { [self] in
             if let currentWeather = await WeatherLoad().loadCurrentWeather(currentLocation: currentLocation, locationName: locationName, timeZoneIdentifier: timeZoneIdentifier ?? Calendar.current.timeZone.identifier) {
                 DispatchQueue.main.async { [self] in
@@ -259,6 +270,7 @@ final class WeatherMainInfoView: UIView {
         if currentWeather.sunsetTimeString != "" {
             sunsetTime.text = Date().timeFormat(currentWeather.sunsetTimeString)
         }
+        self.spinner.stopAnimating()
     }
     
     private func setupConstraints() {
@@ -267,6 +279,9 @@ final class WeatherMainInfoView: UIView {
             mainInfoBackground.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
             mainInfoBackground.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
             mainInfoBackground.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+            
+            spinner.leadingAnchor.constraint(equalTo: mainInfoBackground.leadingAnchor, constant: 15),
+            spinner.topAnchor.constraint(equalTo: mainInfoBackground.topAnchor, constant: 15),
             
             ellipse.leadingAnchor.constraint(equalTo: mainInfoBackground.leadingAnchor, constant: 33),
             ellipse.trailingAnchor.constraint(equalTo: mainInfoBackground.trailingAnchor, constant: -33),

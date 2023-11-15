@@ -84,7 +84,7 @@ final class Forecast24HoursViewController: UIViewController {
         title = setTitle()
         
         let backButton = UIBarButtonItem()
-        backButton.title = "Назад"
+        backButton.title = "Back".localized
         self.navigationController?.navigationBar.topItem?.backBarButtonItem = backButton
     }
     
@@ -112,9 +112,14 @@ final class Forecast24HoursViewController: UIViewController {
     
     private func setTitle() -> String {
         if dayNumber == nil {
-            return "Прогноз на 24 часа"
+            return "24 hours forecast".localized
         } else {
-            return Date().forecast24hoursTitle(dateString: data24hours[dayNumber! * 24 + 1].date).lowercased()
+            let text = Date().forecast24hoursTitle(dateString: data24hours[dayNumber! * 24 + 1].date)
+            if Locale.current.language.languageCode?.identifier == "ru" {
+                return text.lowercased()
+            } else {
+                return text
+            }
         }
     }
 }
