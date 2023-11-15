@@ -11,6 +11,7 @@ final class LocationObject: Object {
     @Persisted var latitude: Double
     @Persisted var longitude: Double
     @Persisted var name: String?
+    @Persisted var timeZoneIdentifier: String?
     
     override class func primaryKey() -> String? {
         "name"
@@ -21,5 +22,6 @@ final class LocationObject: Object {
         latitude = location.latitude
         longitude = location.latitude
         name = location.name
+        timeZoneIdentifier = location.timeZoneIdentifier
     }
 }

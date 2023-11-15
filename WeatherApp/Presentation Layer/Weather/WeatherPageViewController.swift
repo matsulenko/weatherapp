@@ -63,28 +63,29 @@ final class WeatherPageViewController: UIPageViewController {
             let realm = try Realm()
             let objects = realm.objects(LocationObject.self)
             for i in objects{
-                if i.name == "Текущее местоположение" {
+                if i.name == "Current location" || i.name == "Текущее местоположение" {
                     if locationManager.authorizationStatus == .authorizedWhenInUse || locationManager.authorizationStatus == .authorizedAlways {
-                        let newVC = WeatherViewController(isFromDeviceLocation: true, currentLocation: CLLocation(latitude: i.latitude, longitude: i.longitude))
+                        let newVC = WeatherViewController(isFromDeviceLocation: true, currentLocation: CLLocation(latitude: i.latitude, longitude: i.longitude), timeZoneIdentifier: i.timeZoneIdentifier)
                         newVC.locationName = i.name
                         updatedPages.insert(newVC, at: 0)
                     } else if objects.count == 1 {
-                        let newVC = WeatherViewController(isFromDeviceLocation: false, currentLocation: nil)
+                        let newVC = WeatherViewController(isFromDeviceLocation: false, currentLocation: nil, timeZoneIdentifier: nil)
                         updatedPages.append(newVC)
                     }
                 } else {
-                    let newVC = WeatherViewController(isFromDeviceLocation: false, currentLocation: CLLocation(latitude: i.latitude, longitude: i.longitude))
+                    let newVC = WeatherViewController(isFromDeviceLocation: false, currentLocation: CLLocation(latitude: i.latitude, longitude: i.longitude), timeZoneIdentifier: i.timeZoneIdentifier)
                     newVC.locationName = i.name
+                    newVC.footerView.deleteButton.addTarget(self, action: #selector(moveToNextPage), for: .touchUpInside)
                     updatedPages.append(newVC)
                 }
             }
             if updatedPages.count > 0 {
                 pages = updatedPages
             } else {
-                pages = [WeatherViewController(isFromDeviceLocation: true, currentLocation: nil)]
+                pages = [WeatherViewController(isFromDeviceLocation: true, currentLocation: nil, timeZoneIdentifier: nil)]
             }
         } catch {
-            pages = [WeatherViewController(isFromDeviceLocation: true, currentLocation: nil)]
+            pages = [WeatherViewController(isFromDeviceLocation: true, currentLocation: nil, timeZoneIdentifier: nil)]
         }
     }
         
@@ -166,16 +167,16 @@ final class WeatherPageViewController: UIPageViewController {
     
     @objc
     private func chooseLocation() {
-        let alert = UIAlertController(title: "Добавить город", message: "", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Add new location".localized, message: "", preferredStyle: .alert)
         
         alert.addTextField { (textField : UITextField!) -> Void in
-            textField.placeholder = "Название города"
+            textField.placeholder = "Location name".localized
             textField.autocapitalizationType = .words
         }
         
         alert.addAction(
             UIAlertAction(
-                title: "Отмена",
+                title: "Cancel".localized,
                 style: .cancel,
                 handler: nil
             )
@@ -183,7 +184,7 @@ final class WeatherPageViewController: UIPageViewController {
 
         alert.addAction(
             UIAlertAction(
-                title: "Ок",
+                title: "Ok".localized,
                 style: .default,
                 handler: { [weak alert] _ in
                     guard let alert = alert, let textField = alert.textFields?.first else { return }
@@ -198,10 +199,12 @@ final class WeatherPageViewController: UIPageViewController {
     func addLocation(name: String?) {
         if name != nil {
             CLGeocoder().geocodeAddressString(name!) { [self] completion, error in
-                let newVC = WeatherViewController(isFromDeviceLocation: false, currentLocation: completion?.first?.location)
+
+                let newVC = WeatherViewController(isFromDeviceLocation: false, currentLocation: completion?.first?.location, timeZoneIdentifier: completion?.first?.timeZone?.identifier)
                 newVC.locationName = name
+                newVC.footerView.deleteButton.addTarget(self, action: #selector(moveToNextPage), for: .touchUpInside)
                 if let latitude = completion?.first?.location?.coordinate.latitude, let longitude = completion?.first?.location?.coordinate.longitude {
-                    let newLocation = Location(latitude: latitude, longitude: longitude, name: name)
+                    let newLocation = Location(latitude: latitude, longitude: longitude, name: name, timeZoneIdentifier: completion?.first?.timeZone?.identifier)
                     pages.append(newVC)
                     RealmService().saveLocation(newLocation)
                 }
@@ -275,6 +278,69 @@ extension WeatherPageViewController: UIPageViewControllerDataSource, UIPageViewC
             }
         }
     }
+    
+    @objc
+    func moveToNextPage() {
+
+        guard case let (currentViewController as WeatherViewController) = self.viewControllers?.first else { return print("Failed to get current view controller") }
+
+        if pages.count == 1 {
+            let newVC = WeatherViewController(isFromDeviceLocation: false, currentLocation: nil, timeZoneIdentifier: nil)
+            newVC.plusButton.addTarget(self, action: #selector(chooseLocation), for: .touchUpInside)
+            pages.append(newVC)
+            
+            currentIndex = (pages.count - 1)
+            if let lastVC = pages.last {
+                setViewControllers([lastVC], direction: .forward, animated: true, completion: nil)
+            }
+            
+            guard let locationToDelete = currentViewController.locationName else { return }
+            RealmService().deleteLocation(locationToDelete)
+            
+            pages.remove(at: 0)
+            title = "Add new location".localized
+        }
+        
+        guard let nextViewController = self.dataSource?.pageViewController( self, viewControllerAfter: currentViewController) else { return }
+
+        setViewControllers([nextViewController], direction: .forward, animated: true) {[self] isSet in
+            if isSet {
+                if let index = pages.firstIndex(of: nextViewController as! WeatherViewController) {
+                    currentIndex = index
+                    pageControl.currentPage = index
+                    self.title = pages[index].title
+                    
+                    for i in 0..<pages.count {
+                        if i == index - 1 {
+                            pageControl.setIndicatorImage(UIImage(systemName: "circle.fill"), forPage: i)
+                        } else {
+                            pageControl.setIndicatorImage(UIImage(systemName: "circle"), forPage: i)
+                        }
+                    }
+                    
+                    if index == 0 {
+                        if pages.count < 2 {
+                            print("Count of pages is less than 2")
+                        } else {
+                            pages.removeLast()
+                            pageControl.setIndicatorImage(UIImage(systemName: "circle.fill"), forPage: 0)
+                        }
+                    } else {
+                        pages.remove(at: (index - 1))
+                    }
+                    
+                    pageControl.numberOfPages = pages.count
+                    
+                    if pageControl.numberOfPages == 1 {
+                        pageControl.setIndicatorImage(UIImage(systemName: "circle.fill"), forPage: index)
+                    }
+                    
+                    guard let locationToDelete = currentViewController.locationName else { return }
+                    RealmService().deleteLocation(locationToDelete)
+                }
+            }
+        }
+    }
 }
 
 extension WeatherPageViewController: CLLocationManagerDelegate {
@@ -289,15 +355,15 @@ extension WeatherPageViewController: CLLocationManagerDelegate {
             do {
                 let realm = try Realm()
                 let objects = realm.objects(LocationObject.self)
-                if let ifFromDeviceLocationVC = objects.first(where: {$0.name == "Текущее местоположение"}) {
-                    let newVC = WeatherViewController(isFromDeviceLocation: true, currentLocation: CLLocation(latitude: ifFromDeviceLocationVC.latitude, longitude: ifFromDeviceLocationVC.longitude))
+                if let ifFromDeviceLocationVC = objects.first(where: {$0.name == "Текущее местоположение" || $0.name == "Current location"}) {
+                    let newVC = WeatherViewController(isFromDeviceLocation: true, currentLocation: CLLocation(latitude: ifFromDeviceLocationVC.latitude, longitude: ifFromDeviceLocationVC.longitude), timeZoneIdentifier: ifFromDeviceLocationVC.timeZoneIdentifier)
                     newVC.locationName = ifFromDeviceLocationVC.name
                     pages.insert(newVC, at: 0)
                 } else {
-                    pages.insert(WeatherViewController(isFromDeviceLocation: true, currentLocation: nil), at: 0)
+                    pages.insert(WeatherViewController(isFromDeviceLocation: true, currentLocation: nil, timeZoneIdentifier: nil), at: 0)
                 }
             } catch {
-                pages = [WeatherViewController(isFromDeviceLocation: true, currentLocation: nil)]
+                pages = [WeatherViewController(isFromDeviceLocation: true, currentLocation: nil, timeZoneIdentifier: nil)]
             }
             
             pageControl.numberOfPages = pages.count

@@ -89,4 +89,37 @@ final class RealmService {
             fatalError()
         }
     }
+    
+    func deleteLocation(_ locationName: String) {
+        do {
+            let realm = try Realm()
+            
+            try! realm.write {
+
+                let location = realm.objects(LocationObject.self).where {
+                    $0.name == locationName
+                }
+                
+                let weatherDaily = realm.objects(WeatherForecastDailyObject.self).where {
+                    $0.locationName == locationName
+                }
+                
+                let weatherHourly = realm.objects(WeatherForecastHourlyObject.self).where {
+                    $0.locationName == locationName
+                }
+                
+                let weatherCurrent = realm.objects(WeatherForecastCurrentObject.self).where {
+                    $0.locationName == locationName
+                }
+
+                realm.delete(location)
+                realm.delete(weatherDaily)
+                realm.delete(weatherHourly)
+                realm.delete(weatherCurrent)
+            }
+            
+        } catch {
+            print("It's impossible to delete location '\(locationName)' and its relative objects")
+        }
+    }
 }

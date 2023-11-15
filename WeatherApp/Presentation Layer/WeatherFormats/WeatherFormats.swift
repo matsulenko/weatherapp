@@ -8,7 +8,15 @@
 import UIKit
 import WeatherKit
 
-extension UIView {
+extension Date {
+    
+    func getLocale() -> Locale {
+        if Locale.current.language.languageCode?.identifier == "ru" {
+            Locale(identifier: "ru_RU")
+        } else {
+            Locale(identifier: "en")
+        }
+    }
     
     func temperatureFormat(_ temperature: Double) -> Double {
         let defaults = UserDefaults.standard
@@ -50,13 +58,38 @@ extension UIView {
         }
     }
     
-    func timeFormatLong(_ timeString: String) -> String {
+    func timeFormatLong(_ timeString: String, timeZoneIdentifier: String?) -> String {
         let defaults = UserDefaults.standard
         
-        if defaults.bool(forKey: "Time12") {
-            return timeAmPmLong(timeString)
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = TimeZone(identifier: timeZoneIdentifier ?? Calendar.current.timeZone.identifier)
+        dateFormatter.dateFormat = "HH:mm, E d MMMM yyyy"
+        dateFormatter.locale = Locale(identifier: "ru_RU")
+        let updateTime = dateFormatter.date(from: timeString)!
+        
+        if updateTime.timeIntervalSinceNow >= -720 {
+            return "Updated now".localized
         } else {
-            return timeString
+            if defaults.bool(forKey: "Time12") {
+                let text = timeAmPmLong(timeString, timeZoneIdentifier: Calendar.current.timeZone.identifier)
+                if Locale.current.language.languageCode?.identifier == "ru" {
+                    return text.lowercased()
+                } else {
+                    return text
+                }
+            } else {
+                let dateFormatter24 = DateFormatter()
+                dateFormatter24.dateFormat = "HH:mm, E d MMMM"
+                dateFormatter24.timeZone = TimeZone(identifier: Calendar.current.timeZone.identifier)
+                dateFormatter24.locale = getLocale()
+                let text = dateFormatter24.string(from: updateTime)
+                
+                if Locale.current.language.languageCode?.identifier == "ru" {
+                    return text.lowercased()
+                } else {
+                    return text
+                }
+            }
         }
     }
     
@@ -64,9 +97,9 @@ extension UIView {
         let defaults = UserDefaults.standard
         
         if defaults.bool(forKey: "WindSpeedInMi") {
-            return "ми\\ч"
+            return "MPH".localized
         } else {
-            return "м\\с"
+            return "m/s".localized
         }
     }
     
@@ -74,9 +107,9 @@ extension UIView {
         let defaults = UserDefaults.standard
         
         if defaults.bool(forKey: "WindSpeedInMi") {
-            return "mph"
+            return "MPH".localized
         } else {
-            return "m/s"
+            return "m/s".localized
         }
     }
     
@@ -112,16 +145,18 @@ extension UIView {
         return dateFormatter12.string(from: time)
     }
     
-    func timeAmPmLong(_ twentyFourFormat: String) -> String {
+    func timeAmPmLong(_ twentyFourFormat: String, timeZoneIdentifier: String?) -> String {
         let dateFormatter24 = DateFormatter()
-        dateFormatter24.dateFormat = "HH:mm, E d MMMM"
+        dateFormatter24.dateFormat = "HH:mm, E d MMMM yyyy"
+        dateFormatter24.timeZone = TimeZone(identifier: timeZoneIdentifier ?? Calendar.current.timeZone.identifier)
         dateFormatter24.locale = Locale(identifier: "ru_RU")
         
         let time = dateFormatter24.date(from: twentyFourFormat)!
         
         let dateFormatter12 = DateFormatter()
         dateFormatter12.dateFormat = "h:mm a, E d MMMM"
-        dateFormatter12.locale = Locale(identifier: "ru_RU")
+        dateFormatter12.timeZone = TimeZone(identifier: timeZoneIdentifier ?? Calendar.current.timeZone.identifier)
+        dateFormatter12.locale = getLocale()
         
         return dateFormatter12.string(from: time)
     }
@@ -136,51 +171,70 @@ extension UIView {
         return String(Int(double.rounded())) + "°"
     }
     
-    func dateToStringLong(_ date: Date?) -> String {
+    func dateToStringLong(_ date: Date?, timeZoneIdentifier: String?) -> String {
         guard let date = date else { return "" }
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "HH:mm, E d MMMM"
+        dateFormatter.dateFormat = "HH:mm, E d MMMM yyyy"
         dateFormatter.locale = Locale(identifier: "ru_RU")
+        dateFormatter.timeZone = TimeZone(identifier: timeZoneIdentifier ?? Calendar.current.timeZone.identifier)
         
         return dateFormatter.string(from: date)
     }
     
-    func dateToStringShort(_ date: Date?) -> String {
+    func stringToDateLong(_ dateString: String, timeZoneIdentifier: String?) -> Date {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm, E d MMMM yyyy"
+        dateFormatter.locale = Locale(identifier: "ru_RU")
+        dateFormatter.timeZone = TimeZone(identifier: timeZoneIdentifier ?? Calendar.current.timeZone.identifier)
+        
+        return dateFormatter.date(from: dateString) ?? Date()
+    }
+    
+    func dateToStringShort(_ date: Date?, timeZoneIdentifier: String?) -> String {
         guard let date = date else { return "" }
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "E d"
-        dateFormatter.locale = Locale(identifier: "ru_RU")
+        dateFormatter.locale = getLocale()
+        dateFormatter.timeZone = TimeZone(identifier: timeZoneIdentifier ?? Calendar.current.timeZone.identifier)
         
         return dateFormatter.string(from: date)
     }
     
-    func dateToStringMedium(_ date: Date?) -> String {
+    func dateToStringMedium(_ date: Date?, timeZoneIdentifier: String?) -> String {
         guard let date = date else { return "" }
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "E dd/MM"
-        dateFormatter.locale = Locale(identifier: "ru_RU")
+        dateFormatter.locale = getLocale()
+        dateFormatter.timeZone = TimeZone(identifier: timeZoneIdentifier ?? Calendar.current.timeZone.identifier)
+        let text = dateFormatter.string(from: date).lowercased()
         
-        return dateFormatter.string(from: date).lowercased()
+        if Locale.current.language.languageCode?.identifier == "ru" {
+            return text.lowercased()
+        } else {
+            return text
+        }
     }
     
-    func fullToShort(_ dateString: String?) -> String {
+    func fullToShort(_ dateString: String?, timeZoneIdentifier: String?) -> String {
         guard let date = stringToDateFull(dateString) else { return "" }
         
-        return dateToStringShort(date)
+        return dateToStringShort(date, timeZoneIdentifier: timeZoneIdentifier)
     }
     
-    func dateToStringFull(_ date: Date?) -> String {
+    func dateToStringFull(_ date: Date?, timeZoneIdentifier: String?) -> String {
         guard let date = date else { return "" }
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
+        dateFormatter.timeZone = TimeZone(identifier: timeZoneIdentifier ?? Calendar.current.timeZone.identifier)
         
         return dateFormatter.string(from: date)
     }
     
-    func dateToStringTime(_ date: Date?) -> String {
+    func dateToStringTime(_ date: Date?, timeZoneIdentifier: String?) -> String {
         guard let date = date else { return "" }
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "HH:mm"
+        dateFormatter.timeZone = TimeZone(identifier: timeZoneIdentifier ?? Calendar.current.timeZone.identifier)
         
         return dateFormatter.string(from: date)
     }
@@ -193,192 +247,238 @@ extension UIView {
         return dateFormatter.date(from: dateString)
     }
     
-    func getHours(_ date: Date) -> Int {
+    func getHours(_ date: Date, timeZoneIdentifier: String?) -> Int {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "H"
+        dateFormatter.timeZone = TimeZone(identifier: timeZoneIdentifier ?? Calendar.current.timeZone.identifier)
         
         return Int(dateFormatter.string(from: date))!
     }
     
-    func startTimeDate() -> Date {
-        let date = Date()
+    func getHoursFromString(_ timeString: String) -> Int {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "H"
-        let hours = getHours(date)
-        var newDate = date
+        dateFormatter.dateFormat = "HH:mm"
         
-        switch hours {
-        case 3..<6:
-            newDate = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: date)!
-        case 6..<9:
-            newDate = Calendar.current.date(bySettingHour: 3, minute: 0, second: 0, of: date)!
-        case 9..<12:
-            newDate = Calendar.current.date(bySettingHour: 6, minute: 0, second: 0, of: date)!
-        case 12..<15:
-            newDate = Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: date)!
-        case 15..<18:
-            newDate = Calendar.current.date(bySettingHour: 12, minute: 0, second: 0, of: date)!
-        case 18..<21:
-            newDate = Calendar.current.date(bySettingHour: 15, minute: 0, second: 0, of: date)!
-        case 21..<24:
-            newDate = Calendar.current.date(bySettingHour: 18, minute: 0, second: 0, of: date)!
-        case 0..<3:
-            newDate = Calendar.current.date(bySettingHour: 21, minute: 0, second: 0, of: date)!
-            newDate = Calendar.current.date(byAdding: .day, value: -1, to: newDate)!
-        default:
-            newDate = Calendar.current.date(byAdding: .hour, value: -3, to: date)!
-        }
+        let date = dateFormatter.date(from: timeString)!
+        
+        let hoursDateFormatter = DateFormatter()
+        hoursDateFormatter.dateFormat = "H"
+        
+        return Int(hoursDateFormatter.string(from: date))!
+    }
+    
+    func getDateIndex(_ date: Date, timeZoneIdentifier: String?) -> Int {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyyMMdd"
+        dateFormatter.timeZone = TimeZone(identifier: timeZoneIdentifier ?? Calendar.current.timeZone.identifier)
+        
+        return Int(dateFormatter.string(from: date))!
+    }
+    
+    func calculateTimeInterval(_ date: Date, from: TimeZone, to: TimeZone) -> TimeInterval {
+        let sourceOffset = from.secondsFromGMT(for: date)
+        let destinationOffset = to.secondsFromGMT(for: date)
+        return TimeInterval(destinationOffset - sourceOffset)
+    }
+    
+    func changeToTimeZone(_ date: Date, from: TimeZone, to: TimeZone) -> Date {
+        let timeInterval = calculateTimeInterval(date, from: from, to: to)
+        return Date(timeInterval: timeInterval, since: date)
+    }
+    
+    func startTimeDate(timeZoneIdentifier: String?) -> Date {
+        
+        let dateString = dateToStringWithoutTime(Date(), timeZoneIdentifier: timeZoneIdentifier)
+        let newDate = stringToDateWithoutTime(dateString, timeZoneIdentifier: timeZoneIdentifier)
         
         return newDate
     }
     
-    func startTimeString() -> String {
-        let startTime = startTimeDate()
+    func dateToStringWithoutTime(_ date: Date?, timeZoneIdentifier: String?) -> String {
+        guard let date = date else { return "" }
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        dateFormatter.timeZone = TimeZone(identifier: timeZoneIdentifier ?? Calendar.current.timeZone.identifier)
+        
+        return dateFormatter.string(from: date)
+    }
+    
+    func stringToDateWithoutTime(_ dateString: String, timeZoneIdentifier: String?) -> Date {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        dateFormatter.timeZone = TimeZone(identifier: timeZoneIdentifier ?? Calendar.current.timeZone.identifier)
+        
+        return dateFormatter.date(from: dateString)!
+    }
+    
+    func startTimeString(timeZoneIdentifier: String?) -> String {
+        let startTime = startTimeDate(timeZoneIdentifier: timeZoneIdentifier)
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "HH:mm"
         
         return dateFormatter.string(from: startTime)
     }
     
-    func endTimeDate() -> Date {
-        let startTime = startTimeDate()
+    func endTimeDate(timeZoneIdentifier: String?) -> Date {
+        let startTime = startTimeDate(timeZoneIdentifier: timeZoneIdentifier)
         
-        return Calendar.current.date(byAdding: .hour, value: 26, to: startTime)!
+        return Calendar.current.date(byAdding: .hour, value: 240, to: startTime)!
     }
     
-    func addHoursToStartTime(_ hours: Int) -> Date {
-        let startTime = startTimeDate()
+    func addHoursToStartTime(_ hours: Int, timeZoneIdentifier: String?) -> Date {
+        let startTime = startTimeDate(timeZoneIdentifier: timeZoneIdentifier)
         
         return Calendar.current.date(byAdding: .hour, value: hours, to: startTime)!
     }
     
-    func add3HoursToStartTimeString() -> String {
-        let startTime = startTimeDate()
-        let newTime = Calendar.current.date(byAdding: .hour, value: 3, to: startTime)!
+    func addHoursToDate(date: Date, hours: Int) -> Date {
+        return Calendar.current.date(byAdding: .hour, value: hours, to: date)!
+    }
+    
+    func forecast24hoursTitle(dateString: String) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "E dd/MM"
+        dateFormatter.locale = getLocale()
+        
+        let date = dateFormatter.date(from: dateString)!
+        
+        let titleFormatter = DateFormatter()
+        if Locale.current.language.languageCode?.identifier == "ru" {
+            titleFormatter.dateFormat = "d MMMM (E)"
+        } else {
+            titleFormatter.dateFormat = "MMMM, d (E)"
+        }
+        titleFormatter.locale = getLocale()
+        
+        return titleFormatter.string(from: date)
+    }
+    
+    func addDaysToStartTime(_ days: Int, timeZoneIdentifier: String?) -> Date {
+        let startTime = startTimeDate(timeZoneIdentifier: timeZoneIdentifier)
+        
+        return Calendar.current.date(byAdding: .day, value: days, to: startTime)!
+    }
+    
+    func currentTimeString(timeZoneIdentifier: String?) -> String {
+        let time = Date()
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "HH:mm"
+        let newDate = Calendar.current.date(bySettingHour: getHours(Date(), timeZoneIdentifier: timeZoneIdentifier), minute: 0, second: 0, of: time) ?? Date()
         
-        return dateFormatter.string(from: newTime)
+        return dateFormatter.string(from: newDate)
     }
     
-    func convertToLocationTimeZone(date: Date, secondsFromGMT: Int?) -> Date {
-        let systemTimeZone = Calendar.current.timeZone.secondsFromGMT()
-        let difference = (secondsFromGMT ?? systemTimeZone) - systemTimeZone
-        
-        return Calendar.current.date(byAdding: .second, value: difference, to: date)!
-    }
-    
-    func endDate() -> Date {
-        Calendar.current.date(byAdding: .day, value: 10, to: Date())!
+    func endDate(timeZoneIdentifier: String?) -> Date {
+        Calendar.current.date(byAdding: .day, value: 10, to: addHoursToStartTime(3, timeZoneIdentifier: timeZoneIdentifier))!
     }
     
     func windDirectionText(_ windDirection: Wind.CompassDirection) -> String {
         switch windDirection {
         case .north:
-            "С"
+            "N".localized
         case .northNortheast:
-            "ССВ"
+            "NNE".localized
         case .northeast:
-            "СВ"
+            "NE".localized
         case .eastNortheast:
-            "ВСВ"
+            "ENE".localized
         case .east:
-            "В"
+            "E".localized
         case .eastSoutheast:
-            "ВЮВ"
+            "ESE".localized
         case .southeast:
-            "ЮВ"
+            "SE".localized
         case .southSoutheast:
-            "ЮЮВ"
+            "SSE".localized
         case .south:
-            "Ю"
+            "S".localized
         case .southSouthwest:
-            "ЮЮЗ"
+            "SSW".localized
         case .southwest:
-            "ЮЗ"
+            "SW".localized
         case .westSouthwest:
-            "ЗЮЗ"
+            "WSW".localized
         case .west:
-            "З"
+            "W".localized
         case .westNorthwest:
-            "ЗСЗ"
+            "WNW".localized
         case .northwest:
-            "СЗ"
+            "NW".localized
         case .northNorthwest:
-            "ССЗ"
+            "NNW".localized
         }
     }
     
     func weatherCondition(_ condition: WeatherCondition) -> String {
         switch condition {
         case .blizzard:
-            "Метель"
+            "Blizzard".localized
         case .blowingDust:
-            "Песчаная буря"
+            "Blowing dust".localized
         case .blowingSnow:
-            "Снежная буря"
+            "Blowing snow".localized
         case .breezy:
-            "Свежесть"
+            "Breezy".localized
         case .clear:
-            "Ясно"
+            "Clear".localized
         case .cloudy:
-            "Облачно"
+            "Cloudy".localized
         case .drizzle:
-            "Моросящий дождь"
+            "Drizzle".localized
         case .flurries:
-            "Шквалы"
+            "Flurries".localized
         case .foggy:
-            "Туман"
+            "Foggy".localized
         case .freezingDrizzle:
-            "Моросящий ледяной дождь"
+            "Freezing drizzle".localized
         case .freezingRain:
-            "Ледяной дождь"
+            "Freezing rain".localized
         case .frigid:
-            "Холод"
+            "Frigid".localized
         case .hail:
-            "Град"
+            "Hail".localized
         case .haze:
-            "Лёгкий туман"
+            "Haze".localized
         case .heavyRain:
-            "Ливень"
+            "Heavy rain".localized
         case .heavySnow:
-            "Снегопад"
+            "Heavy snow".localized
         case .hot:
-            "Жара"
+            "Hot".localized
         case .hurricane:
-            "Ураган"
+            "Hurricane".localized
         case .isolatedThunderstorms:
-            "Местами грозы"
+            "Isolated thunderstorms".localized
         case .mostlyClear:
-            "Преимущественно ясно"
+            "Mostly clear".localized
         case .mostlyCloudy:
-            "Преимущественно облачно"
+            "Mostly cloudy".localized
         case .partlyCloudy:
-            "Переменная облачность"
+            "Partly cloudy".localized
         case .rain:
-            "Дождь"
+            "Rain".localized
         case .scatteredThunderstorms:
-            "Возможны грозы"
+            "Scattered thunderstorms".localized
         case .sleet:
-            "Мокрый снег"
+            "Sleet".localized
         case .smoky:
-            "Дымка"
+            "Smoky".localized
         case .snow:
-            "Снег"
+            "Snow".localized
         case .strongStorms:
-            "Сильные штормы"
+            "Strong storms".localized
         case .sunFlurries:
-            "Солнечные шквалы"
+            "Sun flurries".localized
         case .sunShowers:
-            "Грибной дождь"
+            "Sun showers".localized
         case .thunderstorms:
-            "Гроза"
+            "Thunderstorms".localized
         case .tropicalStorm:
-            "Тропическая буря"
+            "Tropical storm".localized
         case .windy:
-            "Ветрено"
+            "Windy".localized
         case .wintryMix:
-            "Дождь со снегом"
+            "Wintry mix".localized
         @unknown default:
             ""
         }

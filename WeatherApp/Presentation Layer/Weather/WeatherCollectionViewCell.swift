@@ -14,6 +14,8 @@ final class WeatherCollectionViewCell: UICollectionViewCell {
     
     private var isCurrent = false
     
+    var timeZoneIdentifier: String?
+    
     private var isDark = true
     
     private var conditions: WeatherCondition?
@@ -111,9 +113,9 @@ final class WeatherCollectionViewCell: UICollectionViewCell {
             labelText = String(hourData.hours) + ":00"
         }
         
-        timeLabel.text = timeFormatShort(labelText)
+        timeLabel.text = Date().timeFormatShort(labelText)
         
-        if labelText == self.add3HoursToStartTimeString() {
+        if labelText == Date().currentTimeString(timeZoneIdentifier: timeZoneIdentifier) {
             isCurrent = true
         } else {
             isCurrent = false
@@ -123,9 +125,9 @@ final class WeatherCollectionViewCell: UICollectionViewCell {
         
         conditions = hourData.conditions
         
-        conditionsImage.image = weatherConditionImage(condition: conditions!, isDark: isDark, isCurrent: isCurrent)
+        conditionsImage.image = Date().weatherConditionImage(condition: conditions!, isDark: isDark, isCurrent: isCurrent)
         
-        temperatureLabel.text = doubleToTemperature(temperatureFormat(hourData.temperature))
+        temperatureLabel.text = Date().doubleToTemperature(Date().temperatureFormat(hourData.temperature))
         
         if isCurrent {
             conditionsImage.tintColor = .white

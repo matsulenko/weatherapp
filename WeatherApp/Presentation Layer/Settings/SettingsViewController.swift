@@ -57,7 +57,7 @@ final class SettingsViewController: UIViewController {
         label.numberOfLines = 1
         label.font = UIFont(name: "Rubik-Light_Medium", size: 18)
         label.textColor = UIColor(named: "Text")
-        label.text = "Настройки"
+        label.text = "Settings".localized
         
         return label
     }()
@@ -69,7 +69,7 @@ final class SettingsViewController: UIViewController {
         label.numberOfLines = 1
         label.textAlignment = .left
         label.textColor = UIColor(named: "WeatherTableGray")
-        label.text = "Температура"
+        label.text = "Temperature".localized
         
         return label
     }()
@@ -81,7 +81,7 @@ final class SettingsViewController: UIViewController {
         label.numberOfLines = 1
         label.textAlignment = .left
         label.textColor = UIColor(named: "WeatherTableGray")
-        label.text = "Скорость ветра"
+        label.text = "Wind speed".localized
         
         return label
     }()
@@ -93,7 +93,7 @@ final class SettingsViewController: UIViewController {
         label.numberOfLines = 1
         label.textAlignment = .left
         label.textColor = UIColor(named: "WeatherTableGray")
-        label.text = "Формат времени"
+        label.text = "Time format".localized
         
         return label
     }()
@@ -243,8 +243,9 @@ final class SettingsViewController: UIViewController {
         return stackView
     }()
     
-    private lazy var updateSettings = ShadowButton(title: "Сохранить") { [self] in
+    private lazy var updateSettings = ShadowButton(title: "Save".localized) { [self] in
         updateDefaults()
+        WeatherOptions.shared.settingsWereUpdated = true
         self.dismiss(animated: true)
     }
     

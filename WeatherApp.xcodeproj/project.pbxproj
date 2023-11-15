@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BC317A162AFD5A2C00CBC932 /* SkeletonView in Frameworks */ = {isa = PBXBuildFile; productRef = BC317A152AFD5A2C00CBC932 /* SkeletonView */; };
+		BC317A182AFD5C9500CBC932 /* WeatherLoad.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC317A172AFD5C9500CBC932 /* WeatherLoad.swift */; };
 		BC32C7B82AC609FC00AFB265 /* WeatherHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC32C7B72AC609FC00AFB265 /* WeatherHeaderView.swift */; };
 		BC32C7BA2AC6132700AFB265 /* SemiCircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC32C7B92AC6132700AFB265 /* SemiCircleView.swift */; };
 		BC32C7BC2AC64AC800AFB265 /* WeatherMainInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC32C7BB2AC64AC800AFB265 /* WeatherMainInfoView.swift */; };
@@ -15,6 +17,9 @@
 		BC37E3402AC9EC710084B635 /* Forecast24HoursViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC37E33F2AC9EC710084B635 /* Forecast24HoursViewController.swift */; };
 		BC38C5802AC7734B009A381B /* WeatherForecastDaily.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC38C57F2AC7734B009A381B /* WeatherForecastDaily.swift */; };
 		BC38C5822AC776B6009A381B /* WeatherCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC38C5812AC776B6009A381B /* WeatherCollectionViewCell.swift */; };
+		BC484EB42AF2D94F00E40479 /* WeatherFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC484EB32AF2D94F00E40479 /* WeatherFooterView.swift */; };
+		BC51D1DA2B05235A00124769 /* Localized.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC51D1D92B05235A00124769 /* Localized.swift */; };
+		BC51D1DF2B053B0900124769 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = BC51D1E12B053B0900124769 /* Localizable.strings */; };
 		BC85E41E2AD0D72B00E117F2 /* WeatherData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC85E41D2AD0D72B00E117F2 /* WeatherData.swift */; };
 		BC85E4202AD0E09E00E117F2 /* WeatherFormats.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC85E41F2AD0E09E00E117F2 /* WeatherFormats.swift */; };
 		BC85E4232AD2E5BE00E117F2 /* LocationObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC85E4222AD2E5BE00E117F2 /* LocationObject.swift */; };
@@ -62,6 +67,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		BC317A172AFD5C9500CBC932 /* WeatherLoad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherLoad.swift; sourceTree = "<group>"; };
 		BC32C7B72AC609FC00AFB265 /* WeatherHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherHeaderView.swift; sourceTree = "<group>"; };
 		BC32C7B92AC6132700AFB265 /* SemiCircleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemiCircleView.swift; sourceTree = "<group>"; };
 		BC32C7BB2AC64AC800AFB265 /* WeatherMainInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherMainInfoView.swift; sourceTree = "<group>"; };
@@ -70,6 +76,10 @@
 		BC37E33F2AC9EC710084B635 /* Forecast24HoursViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Forecast24HoursViewController.swift; sourceTree = "<group>"; };
 		BC38C57F2AC7734B009A381B /* WeatherForecastDaily.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherForecastDaily.swift; sourceTree = "<group>"; };
 		BC38C5812AC776B6009A381B /* WeatherCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherCollectionViewCell.swift; sourceTree = "<group>"; };
+		BC484EB32AF2D94F00E40479 /* WeatherFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherFooterView.swift; sourceTree = "<group>"; };
+		BC51D1D92B05235A00124769 /* Localized.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localized.swift; sourceTree = "<group>"; };
+		BC51D1DC2B05242100124769 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		BC51D1E02B053B0900124769 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		BC85E41B2AD0C84900E117F2 /* WeatherApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WeatherApp.entitlements; sourceTree = "<group>"; };
 		BC85E41D2AD0D72B00E117F2 /* WeatherData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherData.swift; sourceTree = "<group>"; };
 		BC85E41F2AD0E09E00E117F2 /* WeatherFormats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherFormats.swift; sourceTree = "<group>"; };
@@ -108,6 +118,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC317A162AFD5A2C00CBC932 /* SkeletonView in Frameworks */,
 				BC85E4282AD3618F00E117F2 /* RealmSwift in Frameworks */,
 				BC85E4262AD3618F00E117F2 /* Realm in Frameworks */,
 				BCA8A2522ACB67BC000973F4 /* DGCharts in Frameworks */,
@@ -117,6 +128,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BC317A192AFD5CB200CBC932 /* WeatherLoad */ = {
+			isa = PBXGroup;
+			children = (
+				BC317A172AFD5C9500CBC932 /* WeatherLoad.swift */,
+			);
+			path = WeatherLoad;
+			sourceTree = "<group>";
+		};
 		BC37E33E2AC9EC250084B635 /* Forecast24Hours */ = {
 			isa = PBXGroup;
 			children = (
@@ -128,6 +147,15 @@
 				BCA8A2552ACC7F38000973F4 /* ChartValueFormatter.swift */,
 			);
 			path = Forecast24Hours;
+			sourceTree = "<group>";
+		};
+		BC51D1DB2B05236500124769 /* Locale */ = {
+			isa = PBXGroup;
+			children = (
+				BC51D1D92B05235A00124769 /* Localized.swift */,
+				BC51D1E12B053B0900124769 /* Localizable.strings */,
+			);
+			path = Locale;
 			sourceTree = "<group>";
 		};
 		BC85E41C2AD0D56D00E117F2 /* WeatherService */ = {
@@ -232,6 +260,8 @@
 				BCE4F5FB2AC37B6700795144 /* Weather */,
 				BC37E33E2AC9EC250084B635 /* Forecast24Hours */,
 				BCE4F5FD2AC37B9700795144 /* Settings */,
+				BC85E4392AD4682900E117F2 /* WeatherFormats */,
+				BC51D1DB2B05236500124769 /* Locale */,
 			);
 			path = "Presentation Layer";
 			sourceTree = "<group>";
@@ -239,7 +269,7 @@
 		BCA263682AC2166D00E753FB /* Business Logic Layer */ = {
 			isa = PBXGroup;
 			children = (
-				BC85E4392AD4682900E117F2 /* WeatherFormats */,
+				BC317A192AFD5CB200CBC932 /* WeatherLoad */,
 				BC85E42C2AD36A2400E117F2 /* Realm */,
 			);
 			path = "Business Logic Layer";
@@ -277,6 +307,7 @@
 				BCA263482AC20D1800E753FB /* WeatherViewController.swift */,
 				BCA8EF332AC8CD6F00C39E5A /* WeatherTableViewCell.swift */,
 				BC32C7B72AC609FC00AFB265 /* WeatherHeaderView.swift */,
+				BC484EB32AF2D94F00E40479 /* WeatherFooterView.swift */,
 				BC32C7BB2AC64AC800AFB265 /* WeatherMainInfoView.swift */,
 				BC38C5812AC776B6009A381B /* WeatherCollectionViewCell.swift */,
 				BC32C7B92AC6132700AFB265 /* SemiCircleView.swift */,
@@ -327,6 +358,7 @@
 				BCA8A2512ACB67BC000973F4 /* DGCharts */,
 				BC85E4252AD3618F00E117F2 /* Realm */,
 				BC85E4272AD3618F00E117F2 /* RealmSwift */,
+				BC317A152AFD5A2C00CBC932 /* SkeletonView */,
 			);
 			productName = WeatherApp;
 			productReference = BCA263412AC20D1800E753FB /* WeatherApp.app */;
@@ -354,11 +386,13 @@
 			knownRegions = (
 				en,
 				Base,
+				ru,
 			);
 			mainGroup = BCA263382AC20D1800E753FB;
 			packageReferences = (
 				BCA8A2502ACB67BC000973F4 /* XCRemoteSwiftPackageReference "Charts" */,
 				BC85E4242AD3618F00E117F2 /* XCRemoteSwiftPackageReference "realm-swift" */,
+				BC317A142AFD5A2C00CBC932 /* XCRemoteSwiftPackageReference "SkeletonView" */,
 			);
 			productRefGroup = BCA263422AC20D1800E753FB /* Products */;
 			projectDirPath = "";
@@ -375,6 +409,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BCA2636D2AC21F3600E753FB /* Rubik-VariableFont_wght.ttf in Resources */,
+				BC51D1DF2B053B0900124769 /* Localizable.strings in Resources */,
 				BCA263512AC20D1900E753FB /* LaunchScreen.storyboard in Resources */,
 				BCA2634E2AC20D1900E753FB /* Assets.xcassets in Resources */,
 			);
@@ -400,6 +435,7 @@
 				BC38C5822AC776B6009A381B /* WeatherCollectionViewCell.swift in Sources */,
 				BCA8EF362AC8E44E00C39E5A /* WeatherOptions.swift in Sources */,
 				BC85E4302AD3F22F00E117F2 /* WeatherForecastHourly.swift in Sources */,
+				BC51D1DA2B05235A00124769 /* Localized.swift in Sources */,
 				BC32C7BA2AC6132700AFB265 /* SemiCircleView.swift in Sources */,
 				BC32C7BC2AC64AC800AFB265 /* WeatherMainInfoView.swift in Sources */,
 				BC85E4232AD2E5BE00E117F2 /* LocationObject.swift in Sources */,
@@ -411,10 +447,12 @@
 				BC37E3402AC9EC710084B635 /* Forecast24HoursViewController.swift in Sources */,
 				BCA8A25A2ACC8217000973F4 /* Forecast24HoursHeaderView.swift in Sources */,
 				BCA8A25E2ACDF640000973F4 /* ForecastTableViewCell.swift in Sources */,
+				BC484EB42AF2D94F00E40479 /* WeatherFooterView.swift in Sources */,
 				BC85E4362AD40EE300E117F2 /* WeatherForecastHourlyObject.swift in Sources */,
 				BCA263472AC20D1800E753FB /* SceneDelegate.swift in Sources */,
 				BC38C5802AC7734B009A381B /* WeatherForecastDaily.swift in Sources */,
 				BC85E42E2AD36A4200E117F2 /* RealmService.swift in Sources */,
+				BC317A182AFD5C9500CBC932 /* WeatherLoad.swift in Sources */,
 				BCA8A2652ACF215F000973F4 /* SettingsButton.swift in Sources */,
 				BC85E41E2AD0D72B00E117F2 /* WeatherData.swift in Sources */,
 				BC85E4202AD0E09E00E117F2 /* WeatherFormats.swift in Sources */,
@@ -426,10 +464,19 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
+		BC51D1E12B053B0900124769 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BC51D1E02B053B0900124769 /* ru */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 		BCA2634F2AC20D1900E753FB /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				BCA263502AC20D1900E753FB /* Base */,
+				BC51D1DC2B05242100124769 /* ru */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -442,6 +489,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -505,6 +553,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -564,7 +613,7 @@
 				CODE_SIGN_ENTITLEMENTS = WeatherApp/WeatherApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 23;
 				DEVELOPMENT_TEAM = ZK7BYU4ARD;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WeatherApp/Info.plist;
@@ -600,7 +649,7 @@
 				CODE_SIGN_ENTITLEMENTS = WeatherApp/WeatherApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 23;
 				DEVELOPMENT_TEAM = ZK7BYU4ARD;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WeatherApp/Info.plist;
@@ -652,6 +701,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		BC317A142AFD5A2C00CBC932 /* XCRemoteSwiftPackageReference "SkeletonView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Juanpe/SkeletonView";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.30.4;
+			};
+		};
 		BC85E4242AD3618F00E117F2 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/realm-swift";
@@ -671,6 +728,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		BC317A152AFD5A2C00CBC932 /* SkeletonView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BC317A142AFD5A2C00CBC932 /* XCRemoteSwiftPackageReference "SkeletonView" */;
+			productName = SkeletonView;
+		};
 		BC85E4252AD3618F00E117F2 /* Realm */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = BC85E4242AD3618F00E117F2 /* XCRemoteSwiftPackageReference "realm-swift" */;

@@ -28,7 +28,7 @@ final class OnboardingViewController: UIViewController {
         label.numberOfLines = 0
         label.textAlignment = .center
         label.textColor = UIColor(named: "OnboardingVeryLightGray1")
-        label.text = "Разрешить приложению Weather использовать данные о местоположении вашего устройства"
+        label.text = "Allow Weather App to use your device location data".localized
         
         return label
     }()
@@ -40,7 +40,7 @@ final class OnboardingViewController: UIViewController {
         label.numberOfLines = 0
         label.textAlignment = .center
         label.textColor = .white
-        label.text = "Чтобы получить более точные прогнозы погоды во время движения или путешествия"
+        label.text = "to get an accurate weather forecast during your move or trip".localized
         
         return label
     }()
@@ -52,12 +52,12 @@ final class OnboardingViewController: UIViewController {
         label.numberOfLines = 0
         label.textAlignment = .center
         label.textColor = .white
-        label.text = "Вы можете изменить свой выбор в любое время из меню приложения"
+        label.text = "You can change your choice in your device settings at any time".localized
         
         return label
     }()
     
-    private lazy var deviceLocation = ShadowButton(title: "ИСПОЛЬЗОВАТЬ МЕСТОПОЛОЖЕНИЕ  УСТРОЙСТВА") { [self] in
+    private lazy var deviceLocation = ShadowButton(title: "Use your device location".localized.uppercased()) { [self] in
         locationManager.requestWhenInUseAuthorization()
     }
     
@@ -66,7 +66,7 @@ final class OnboardingViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.contentHorizontalAlignment = .center
         button.setTitleColor(UIColor(named: "OnboardingVeryLightGray2"), for: .normal)
-        button.setTitle("НЕТ, Я БУДУ ДОБАВЛЯТЬ ЛОКАЦИИ", for: .normal)
+        button.setTitle("No, I will add locations myself".localized.uppercased(), for: .normal)
         button.titleLabel?.font = UIFont(name: "Rubik-Light_Regular", size: 16)
         button.addTarget(self, action: #selector(closeOnboarding), for: .touchUpInside)
         
