@@ -13,14 +13,15 @@ final class Forecast24HoursViewController: UIViewController {
     
     private var locationName: String
     
+    private var timeZoneIdentifier: String?
+    
+    private var dayNumber: Int?
+    
     private lazy var headerView: Forecast24HoursHeaderView = {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissView))
-        
-        let view = Forecast24HoursHeaderView(frame: .zero, data24hours: data24hours)
+        let view = Forecast24HoursHeaderView(frame: .zero, data24hours: data24hours, timeZoneIdentifier: timeZoneIdentifier, dayNumber: dayNumber)
         view.data24hours = data24hours
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.locationLabel.text = locationName
-        view.backTarget.addGestureRecognizer(tapGesture)
+        view.topLabel.text = locationName
         
         return view
     }()
@@ -45,9 +46,11 @@ final class Forecast24HoursViewController: UIViewController {
         return tableView
     }()
     
-    init(locationName: String, data24hours: [WeatherForecastHourly]) {
+    init(locationName: String, data24hours: [WeatherForecastHourly], timeZoneIdentifier: String?, dayNumber: Int?) {
         self.locationName = locationName
         self.data24hours = data24hours
+        self.timeZoneIdentifier = timeZoneIdentifier
+        self.dayNumber = dayNumber
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -77,11 +80,12 @@ final class Forecast24HoursViewController: UIViewController {
     
     private func setupView() {
         view.backgroundColor = UIColor(named: "Background")
-    }
-    
-    @objc
-    private func dismissView() {
-        self.dismiss(animated: true)
+        navigationController?.navigationBar.isHidden = false
+        title = setTitle()
+        
+        let backButton = UIBarButtonItem()
+        backButton.title = "Back".localized
+        self.navigationController?.navigationBar.topItem?.backBarButtonItem = backButton
     }
     
     private func setupConstraints() {
@@ -95,7 +99,7 @@ final class Forecast24HoursViewController: UIViewController {
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.topAnchor.constraint(equalTo: safeArea.topAnchor),
-            tableView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
     
@@ -104,6 +108,19 @@ final class Forecast24HoursViewController: UIViewController {
         tableView.register(ForecastTableViewCell.self, forCellReuseIdentifier: ForecastTableViewCell.id)
         tableView.delegate = self
         tableView.dataSource = self
+    }
+    
+    private func setTitle() -> String {
+        if dayNumber == nil {
+            return "24 hours forecast".localized
+        } else {
+            let text = Date().forecast24hoursTitle(dateString: data24hours[dayNumber! * 24 + 1].date)
+            if Locale.current.language.languageCode?.identifier == "ru" {
+                return text.lowercased()
+            } else {
+                return text
+            }
+        }
     }
 }
 
@@ -119,9 +136,31 @@ extension Forecast24HoursViewController: UITableViewDelegate, UITableViewDataSou
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ForecastTableViewCell.id, for: indexPath) as? ForecastTableViewCell else { return UITableViewCell() }
-        let cellData = data24hours[indexPath.row + 1]
-        cell.configure(with: cellData)
-        cell.isUserInteractionEnabled = false
+        
+        var cellIndex = indexPath.row
+        
+        if dayNumber == nil {
+            cellIndex = 3 * indexPath.row + Date().getHours(Date(), timeZoneIdentifier: timeZoneIdentifier)
+        } else {
+            var offset: Int = 0
+            let zeroHour = data24hours[dayNumber! * 24].hours
+            
+            if zeroHour == 23 {
+                offset = 1
+            } else if zeroHour == 1 {
+                offset = -1
+            }
+            
+            cellIndex = dayNumber! * 24 + indexPath.row*3 + offset
+        }
+        
+        if cellIndex < data24hours.count {
+            let cellData = data24hours[cellIndex]
+            cell.configure(with: cellData)
+            cell.isUserInteractionEnabled = false
+        } else {
+            return UITableViewCell()
+        }
         
         return cell
     }

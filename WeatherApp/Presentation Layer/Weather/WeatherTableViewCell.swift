@@ -10,6 +10,8 @@ import UIKit
 final class WeatherTableViewCell: UITableViewCell {
     
     static let id = "WeatherCell"
+    
+    var timeZoneIdentifier: String?
         
     private lazy var dateLabel: UILabel = {
         var label = UILabel()
@@ -17,7 +19,7 @@ final class WeatherTableViewCell: UITableViewCell {
         label.font = UIFont(name: "Rubik-Light_Regular", size: 16)
         label.numberOfLines = 1
         label.textAlignment = .left
-        label.textColor = UIColor(named: "WeatherTableGray")
+        label.textColor = UIColor(named: "Text")
         
         return label
     }()
@@ -26,7 +28,7 @@ final class WeatherTableViewCell: UITableViewCell {
         var label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "Rubik-Light_Regular", size: 16)
-        label.numberOfLines = 1
+        label.numberOfLines = 2
         label.textAlignment = .left
         label.textColor = UIColor(named: "Text")
         label.lineBreakMode = .byTruncatingMiddle
@@ -81,12 +83,17 @@ final class WeatherTableViewCell: UITableViewCell {
     }
     
     func configure(with weatherForecastShort: WeatherForecastDaily) {
-        dateLabel.text = weatherForecastShort.date
+        let dateLabelText = Date().fullToShort(weatherForecastShort.date, timeZoneIdentifier: timeZoneIdentifier)
+        if Locale.current.language.languageCode?.identifier == "ru" {
+            dateLabel.text = dateLabelText.lowercased()
+        } else {
+            dateLabel.text = dateLabelText
+        }
         rainProbabilityLabel.text = String(weatherForecastShort.rainProbability) + "%"
-        temperatureLabel.text = doubleToTemperature(temperatureFormat(weatherForecastShort.minTemperature)) + "/" + doubleToTemperature(temperatureFormat(weatherForecastShort.maxTemperature))
+        temperatureLabel.text = Date().doubleToTemperature(Date().temperatureFormat(weatherForecastShort.minTemperature)) + "/" + Date().doubleToTemperature(Date().temperatureFormat(weatherForecastShort.maxTemperature))
         
-        conditionsLabel.text = weatherCondition(weatherForecastShort.conditions)
-        conditionsImage.image = weatherConditionImage(condition: weatherForecastShort.conditions, isDark: false, isCurrent: false)
+        conditionsLabel.text = Date().weatherCondition(weatherForecastShort.conditions)
+        conditionsImage.image = Date().weatherConditionImage(condition: weatherForecastShort.conditions, isDark: false, isCurrent: false)
         conditionsImage.tintColor = UIColor(named: "MainChart")
     }
     
@@ -106,7 +113,7 @@ final class WeatherTableViewCell: UITableViewCell {
         NSLayoutConstraint.activate([
             dateLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 6),
             dateLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 10),
-            dateLabel.widthAnchor.constraint(equalToConstant: 53),
+            dateLabel.widthAnchor.constraint(equalToConstant: 65),
             
             conditionsImage.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 5),
             conditionsImage.leftAnchor.constraint(equalTo: dateLabel.leftAnchor),
@@ -119,7 +126,7 @@ final class WeatherTableViewCell: UITableViewCell {
             
             conditionsLabel.rightAnchor.constraint(equalTo: temperatureLabel.leftAnchor),
             conditionsLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            conditionsLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 66),
+            conditionsLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 75),
             
             temperatureLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             temperatureLabel.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -10),

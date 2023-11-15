@@ -14,6 +14,8 @@ final class WeatherMainInfoView: UIView {
     
     public var currentLocation: CLLocation
     
+    public var timeZoneIdentifier: String?
+    
     private var locationName: String
     
     private lazy var mainInfoBackground: UIView = {
@@ -174,18 +176,28 @@ final class WeatherMainInfoView: UIView {
         label.numberOfLines = 1
         label.textAlignment = .center
         label.textColor = UIColor(named: "MainInfoYellow")
-        label.text = "Идёт загрузка"
+        label.text = "Loading".localized
         
         return label
     }()
+    
+        private lazy var spinner: UIActivityIndicatorView = {
+            let spinner = UIActivityIndicatorView(style: .medium)
+            spinner.color = .white
+            spinner.translatesAutoresizingMaskIntoConstraints = false
+            spinner.hidesWhenStopped = true
+    
+            return spinner
+        }()
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(frame: CGRect, currentLocation: CLLocation, locationName: String) {
+    init(frame: CGRect, currentLocation: CLLocation, locationName: String, timeZoneIdentifier: String?) {
         self.currentLocation = currentLocation
         self.locationName = locationName
+        self.timeZoneIdentifier = timeZoneIdentifier
         super.init(frame: frame)
         
         addSubviews()
@@ -210,6 +222,7 @@ final class WeatherMainInfoView: UIView {
         addSubview(sunsetImage)
         addSubview(sunsetTime)
         addSubview(updateTime)
+        addSubview(spinner)
     }
     
     private func setupView() {
@@ -220,29 +233,12 @@ final class WeatherMainInfoView: UIView {
     }
     
     public func loadMainData() {
-        Task.detached {
-            guard let current = await WeatherData.shared.currentWeather(for: self.currentLocation) else { return }
-            guard let hourlyCurrent = await WeatherData.shared.hourlyForecast(for: self.currentLocation) else { return }
-            guard let daily = await WeatherData.shared.dailyForecastWithDates(for: self.currentLocation, startDate: Date(), endDate: self.endDate()) else { return }
-            
-            DispatchQueue.main.async { [self] in
-                guard let dailyForecast = daily.forecast.first else { return }
-                let currentWeather = WeatherForecastCurrent(
-                    locationName: locationName,
-                    updateTimeString: dateToStringLong(current.date),
-                    temperature: current.temperature.value,
-                    currentConditions: weatherCondition(current.condition),
-                    precipitationIntensity: current.precipitationIntensity.value,
-                    weatherSpeed: current.wind.speed.converted(to: .metersPerSecond).value,
-                    precipitationChance: hourlyCurrent.forecast[0].precipitationChance,
-                    lowTemperature: daily.forecast.first!.lowTemperature.value,
-                    highTemperature: daily.forecast.first!.highTemperature.value,
-                    sunriseTimeString: dateToStringTime(dailyForecast.sun.sunrise),
-                    sunsetTimeString: dateToStringTime(dailyForecast.sun.sunset)
-                )
-                
-                updateLabels(currentWeather: currentWeather)
-                
+        self.spinner.startAnimating()
+        Task.detached(priority: .utility) { [self] in
+            if let currentWeather = await WeatherLoad().loadCurrentWeather(currentLocation: currentLocation, locationName: locationName, timeZoneIdentifier: timeZoneIdentifier ?? Calendar.current.timeZone.identifier) {
+                DispatchQueue.main.async { [self] in
+                    updateLabels(currentWeather: currentWeather)
+                }
                 RealmService().saveWeatherForecastCurrent(currentWeather)
             }
         }
@@ -261,19 +257,20 @@ final class WeatherMainInfoView: UIView {
     }
     
     private func updateLabels(currentWeather: WeatherForecastCurrent) {
-        updateTime.text = timeFormatLong(currentWeather.updateTimeString).lowercased()
-        currentTemp.text = doubleToTemperature(temperatureFormat(currentWeather.temperature))
+        updateTime.text = Date().timeFormatLong(currentWeather.updateTimeString, timeZoneIdentifier: timeZoneIdentifier)
+        currentTemp.text = Date().doubleToTemperature(Date().temperatureFormat(currentWeather.temperature))
         currentConditions.text = currentWeather.currentConditions
-        currentPrecipitationLevel.text = doubleToString(currentWeather.precipitationIntensity)
-        currentWindLevel.text = "\(doubleToString(windFormat(currentWeather.weatherSpeed))) \(windSuffixMain())"
-        currentRainProbability.text = doubleToString(currentWeather.precipitationChance*100) + "%"
-        nightAndDayTemp.text = doubleToTemperature(temperatureFormat(currentWeather.lowTemperature)) + "/" + doubleToTemperature(temperatureFormat(currentWeather.highTemperature))
+        currentPrecipitationLevel.text = Date().doubleToString(currentWeather.precipitationIntensity)
+        currentWindLevel.text = "\(Date().doubleToString(Date().windFormat(currentWeather.weatherSpeed))) \(Date().windSuffixMain())"
+        currentRainProbability.text = Date().doubleToString(currentWeather.precipitationChance*100) + "%"
+        nightAndDayTemp.text = Date().doubleToTemperature(Date().temperatureFormat(currentWeather.lowTemperature)) + "/" + Date().doubleToTemperature(Date().temperatureFormat(currentWeather.highTemperature))
         if currentWeather.sunriseTimeString != "" {
-            sunriseTime.text = timeFormat(currentWeather.sunriseTimeString)
+            sunriseTime.text = Date().timeFormat(currentWeather.sunriseTimeString)
         }
         if currentWeather.sunsetTimeString != "" {
-            sunsetTime.text = timeFormat(currentWeather.sunsetTimeString)
+            sunsetTime.text = Date().timeFormat(currentWeather.sunsetTimeString)
         }
+        self.spinner.stopAnimating()
     }
     
     private func setupConstraints() {
@@ -282,6 +279,9 @@ final class WeatherMainInfoView: UIView {
             mainInfoBackground.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
             mainInfoBackground.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
             mainInfoBackground.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+            
+            spinner.leadingAnchor.constraint(equalTo: mainInfoBackground.leadingAnchor, constant: 15),
+            spinner.topAnchor.constraint(equalTo: mainInfoBackground.topAnchor, constant: 15),
             
             ellipse.leadingAnchor.constraint(equalTo: mainInfoBackground.leadingAnchor, constant: 33),
             ellipse.trailingAnchor.constraint(equalTo: mainInfoBackground.trailingAnchor, constant: -33),

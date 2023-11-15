@@ -12,8 +12,10 @@ import WeatherKit
 
 final class Forecast24HoursHeaderView: UIView {
     
-    private let currentLocation = CLLocation(latitude: 55.612599, longitude: 37.604565)
-        
+    private var dayNumber: Int?
+    
+    private var timeZoneIdentifier: String?
+    
     private lazy var spacing: CGFloat = {
         var spacing = (bounds.width - 272) / 7
         
@@ -23,45 +25,13 @@ final class Forecast24HoursHeaderView: UIView {
         
         return spacing
     }()
-        
-    private lazy var backImage: UIImageView = {
-        let imageView = UIImageView(frame: .zero)
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFit
-        imageView.image = UIImage(systemName: "arrow.backward")
-        imageView.tintColor = UIColor(named: "Text")
-        imageView.isUserInteractionEnabled = true
-        
-        return imageView
-    }()
     
-    lazy var backTarget: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .clear
-        view.isUserInteractionEnabled = true
-        
-        return view
-    }()
-    
-    private lazy var titleLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "Rubik-Light_Regular", size: 16)
-        label.numberOfLines = 1
-        label.textAlignment = .left
-        label.textColor = UIColor(named: "WeatherTableGray")
-        label.text = "Прогноз на 24 часа"
-        
-        return label
-    }()
-    
-    lazy var locationLabel: UILabel = {
+    lazy var topLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "Rubik-Light_Medium", size: 18)
         label.numberOfLines = 0
-        label.textAlignment = .left
+        label.textAlignment = .center
         label.textColor = UIColor(named: "Text")
         
         return label
@@ -98,11 +68,31 @@ final class Forecast24HoursHeaderView: UIView {
         let chart = LineChartView()
         
         var lineChartEntries: [ChartDataEntry] = []
-        print(data24hours.count)
         
-        for i: Int in 1...8 {
-            let chartDataEntry = ChartDataEntry(x: Double(i), y: data24hours[i].temperature)
-            lineChartEntries.append(chartDataEntry)
+        for i: Int in 0...7 {
+            var indexY = i
+            
+            if dayNumber == nil {
+                indexY = 3 * i + Date().getHours(Date(), timeZoneIdentifier: timeZoneIdentifier)
+            } else {
+                var offset: Int = 0
+                let zeroHour = data24hours[dayNumber! * 24].hours
+                
+                if zeroHour == 23 {
+                    offset = 1
+                } else if zeroHour == 1 {
+                    offset = -1
+                }
+                
+                indexY = dayNumber! * 24 + i * 3 + offset
+            }
+            
+            if indexY < data24hours.count {
+                let chartDataEntry = ChartDataEntry(x: Double(i), y: data24hours[indexY].temperature)
+                lineChartEntries.append(chartDataEntry)
+            } else {
+                break
+            }
         }
         
         let dataSet = LineChartDataSet(entries: lineChartEntries)
@@ -171,7 +161,7 @@ final class Forecast24HoursHeaderView: UIView {
         
         var lineChartEntries: [ChartDataEntry] = []
         
-        for i: Int in 1...8 {
+        for i: Int in 0...7 {
             let chartDataEntry = ChartDataEntry(x: Double(i), y: 1.0)
             lineChartEntries.append(chartDataEntry)
         }
@@ -201,7 +191,7 @@ final class Forecast24HoursHeaderView: UIView {
         chart.xAxis.axisLineColor = .clear
         chart.leftAxis.axisLineColor = .clear
         
-        for i: Int in 1...8 {
+        for i: Int in 0...7 {
             let line = ChartLimitLine(limit: Double(i))
             line.lineWidth = 4
             line.lineColor = UIColor(named: "MainChart")!
@@ -209,7 +199,6 @@ final class Forecast24HoursHeaderView: UIView {
         }
         
         chart.translatesAutoresizingMaskIntoConstraints = false
-//        chart.backgroundColor = UIColor(named: "VeryLightBlue")
         chart.isUserInteractionEnabled = false
         
         return chart
@@ -235,8 +224,10 @@ final class Forecast24HoursHeaderView: UIView {
         return collectionView
     }()
     
-    init(frame: CGRect, data24hours: [WeatherForecastHourly]) {
+    init(frame: CGRect, data24hours: [WeatherForecastHourly], timeZoneIdentifier: String?, dayNumber: Int?) {
         self.data24hours = data24hours
+        self.timeZoneIdentifier = timeZoneIdentifier
+        self.dayNumber = dayNumber
         super.init(frame: frame)
         
         addSubviews()
@@ -259,40 +250,23 @@ final class Forecast24HoursHeaderView: UIView {
         addSubview(temperatureChart)
         addSubview(collectionView)
         addSubview(timeLine)
-        addSubview(backImage)
-        addSubview(backTarget)
-        addSubview(titleLabel)
-        addSubview(locationLabel)
+        addSubview(topLabel)
         addSubview(separator)
     }
     
     private func setupView() {
-        backgroundColor = UIColor(named: "VeryLightBlue")
+        backgroundColor = UIColor(named: "Background")
         collectionView.dataSource = self
         collectionView.delegate = self
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 30),
-            titleLabel.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 52),
-            titleLabel.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            topLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 15),
+            topLabel.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            topLabel.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16),
             
-            backImage.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            backImage.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
-            backImage.widthAnchor.constraint(equalToConstant: 15),
-            backImage.heightAnchor.constraint(equalTo: backImage.widthAnchor),
-            
-            backTarget.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
-            backTarget.trailingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-            backTarget.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
-            backTarget.heightAnchor.constraint(equalToConstant: 100),
-            
-            locationLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 15),
-            locationLabel.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 48),
-            locationLabel.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16),
-            
-            temperatureChart.topAnchor.constraint(equalTo: locationLabel.bottomAnchor, constant: 15),
+            temperatureChart.topAnchor.constraint(equalTo: topLabel.bottomAnchor, constant: 15),
             temperatureChart.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 16),
             temperatureChart.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16),
             temperatureChart.heightAnchor.constraint(equalToConstant: 58),
@@ -332,16 +306,37 @@ extension Forecast24HoursHeaderView: UICollectionViewDataSource {
         if data24hours.count == 0 {
             0
         } else {
-            data24hours.count - 1
+            8
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ForecastCollectionViewCell.id, for: indexPath) as! ForecastCollectionViewCell
         
-        let hourData = data24hours[indexPath.row + 1]
-        cell.setup(with: hourData)
+        var cellIndex = indexPath.row
         
+        if dayNumber == nil {
+            cellIndex = 3 * indexPath.row + Date().getHours(Date(), timeZoneIdentifier: timeZoneIdentifier)
+        } else {
+            var offset: Int = 0
+            let zeroHour = data24hours[dayNumber! * 24].hours
+            
+            if zeroHour == 23 {
+                offset = 1
+            } else if zeroHour == 1 {
+                offset = -1
+            }
+                
+            cellIndex = dayNumber! * 24 + indexPath.row*3 + offset
+        }
+        
+        if cellIndex < data24hours.count {
+            let hourData = data24hours[cellIndex]
+            cell.setup(with: hourData)
+        } else {
+            return UICollectionViewCell()
+        }
+            
         return cell
     }
 }

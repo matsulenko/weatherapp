@@ -10,6 +10,8 @@ import RealmSwift
 import UIKit
 
 final class WeatherPageViewController: UIPageViewController {
+    
+    let locationManager = CLLocationManager()
 
     private var pages: [WeatherViewController] = []
     
@@ -61,19 +63,29 @@ final class WeatherPageViewController: UIPageViewController {
             let realm = try Realm()
             let objects = realm.objects(LocationObject.self)
             for i in objects{
-                let newVC = WeatherViewController(isFromDeviceLocation: false, currentLocation: CLLocation(latitude: i.latitude, longitude: i.longitude))
-                newVC.locationName = i.name
-                updatedPages.append(newVC)
+                if i.name == "Current location" || i.name == "Текущее местоположение" {
+                    if locationManager.authorizationStatus == .authorizedWhenInUse || locationManager.authorizationStatus == .authorizedAlways {
+                        let newVC = WeatherViewController(isFromDeviceLocation: true, currentLocation: CLLocation(latitude: i.latitude, longitude: i.longitude), timeZoneIdentifier: i.timeZoneIdentifier)
+                        newVC.locationName = i.name
+                        updatedPages.insert(newVC, at: 0)
+                    } else if objects.count == 1 {
+                        let newVC = WeatherViewController(isFromDeviceLocation: false, currentLocation: nil, timeZoneIdentifier: nil)
+                        updatedPages.append(newVC)
+                    }
+                } else {
+                    let newVC = WeatherViewController(isFromDeviceLocation: false, currentLocation: CLLocation(latitude: i.latitude, longitude: i.longitude), timeZoneIdentifier: i.timeZoneIdentifier)
+                    newVC.locationName = i.name
+                    newVC.footerView.deleteButton.addTarget(self, action: #selector(moveToNextPage), for: .touchUpInside)
+                    updatedPages.append(newVC)
+                }
             }
-            print(updatedPages.count)
             if updatedPages.count > 0 {
-                updatedPages[0].isFromDeviceLocation = true
                 pages = updatedPages
             } else {
-                pages = [WeatherViewController(isFromDeviceLocation: true, currentLocation: nil)]
+                pages = [WeatherViewController(isFromDeviceLocation: true, currentLocation: nil, timeZoneIdentifier: nil)]
             }
         } catch {
-            pages = [WeatherViewController(isFromDeviceLocation: true, currentLocation: nil)]
+            pages = [WeatherViewController(isFromDeviceLocation: true, currentLocation: nil, timeZoneIdentifier: nil)]
         }
     }
         
@@ -93,6 +105,7 @@ final class WeatherPageViewController: UIPageViewController {
                 i.plusButton.addTarget(self, action: #selector(chooseLocation), for: .touchUpInside)
             }
         }
+        locationManager.delegate = self
     }
     
     private func addSubviews() {
@@ -102,7 +115,7 @@ final class WeatherPageViewController: UIPageViewController {
     private func setupConstraints() {
         let safeArea = view.safeAreaLayoutGuide
         NSLayoutConstraint.activate([
-            pageControl.heightAnchor.constraint(equalToConstant: 10),
+            pageControl.heightAnchor.constraint(equalToConstant: 20),
             pageControl.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
             pageControl.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
             pageControl.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
@@ -111,8 +124,8 @@ final class WeatherPageViewController: UIPageViewController {
     }
         
     private func setupNavigationBar() {
-        self.navigationItem.leftBarButtonItem = menuButton(action: #selector(openSettings), imageName: "Burger", width: 34, height: 18)
-        self.navigationItem.rightBarButtonItem = menuButton(action: #selector(chooseLocation), imageName: "Location", width: 20, height: 26)
+        self.navigationItem.leftBarButtonItem = menuButton(action: #selector(openSettings), image: UIImage(named: "Burger")!, width: 34, height: 18)
+        self.navigationItem.rightBarButtonItem = menuButton(action: #selector(chooseLocation), image: UIImage(systemName: "plus")!, width: 25, height: 25)
         if pages.count == 1 {
             title = pages[0].title
         }
@@ -129,9 +142,9 @@ final class WeatherPageViewController: UIPageViewController {
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
     }
     
-    private func menuButton(action: Selector, imageName: String, width: Double, height: Double) -> UIBarButtonItem {
+    private func menuButton(action: Selector, image: UIImage, width: Double, height: Double) -> UIBarButtonItem {
         let button = UIButton(type: .system)
-        button.setImage(UIImage(named: imageName), for: .normal)
+        button.setImage(image, for: .normal)
         button.addTarget(self, action: action, for: .touchUpInside)
         button.tintColor = UIColor(named: "Text")
 
@@ -154,15 +167,16 @@ final class WeatherPageViewController: UIPageViewController {
     
     @objc
     private func chooseLocation() {
-        let alert = UIAlertController(title: "Добавить город", message: "", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Add new location".localized, message: "", preferredStyle: .alert)
         
         alert.addTextField { (textField : UITextField!) -> Void in
-            textField.placeholder = "Название города"
+            textField.placeholder = "Location name".localized
+            textField.autocapitalizationType = .words
         }
         
         alert.addAction(
             UIAlertAction(
-                title: "Cancel",
+                title: "Cancel".localized,
                 style: .cancel,
                 handler: nil
             )
@@ -170,7 +184,7 @@ final class WeatherPageViewController: UIPageViewController {
 
         alert.addAction(
             UIAlertAction(
-                title: "Ок",
+                title: "Ok".localized,
                 style: .default,
                 handler: { [weak alert] _ in
                     guard let alert = alert, let textField = alert.textFields?.first else { return }
@@ -185,10 +199,12 @@ final class WeatherPageViewController: UIPageViewController {
     func addLocation(name: String?) {
         if name != nil {
             CLGeocoder().geocodeAddressString(name!) { [self] completion, error in
-                let newVC = WeatherViewController(isFromDeviceLocation: false, currentLocation: completion?.first?.location)
+
+                let newVC = WeatherViewController(isFromDeviceLocation: false, currentLocation: completion?.first?.location, timeZoneIdentifier: completion?.first?.timeZone?.identifier)
                 newVC.locationName = name
+                newVC.footerView.deleteButton.addTarget(self, action: #selector(moveToNextPage), for: .touchUpInside)
                 if let latitude = completion?.first?.location?.coordinate.latitude, let longitude = completion?.first?.location?.coordinate.longitude {
-                    let newLocation = Location(latitude: latitude, longitude: longitude, name: name)
+                    let newLocation = Location(latitude: latitude, longitude: longitude, name: name, timeZoneIdentifier: completion?.first?.timeZone?.identifier)
                     pages.append(newVC)
                     RealmService().saveLocation(newLocation)
                 }
@@ -204,9 +220,10 @@ final class WeatherPageViewController: UIPageViewController {
                     setViewControllers([lastVC], direction: .forward, animated: true, completion: nil)
                 }
                 if pages.count > 1 {
-                    pageControl.setIndicatorImage(UIImage(systemName: "circle"), forPage: (pages.count - 2))
+                    for i in 0...(pages.count - 2) {
+                        pageControl.setIndicatorImage(UIImage(systemName: "circle"), forPage: (i))
+                    }
                 }
-                
             }
         }
     }
@@ -258,6 +275,109 @@ extension WeatherPageViewController: UIPageViewControllerDataSource, UIPageViewC
                 return pages.first
             } else {
                 return pages[index + 1]
+            }
+        }
+    }
+    
+    @objc
+    func moveToNextPage() {
+
+        guard case let (currentViewController as WeatherViewController) = self.viewControllers?.first else { return print("Failed to get current view controller") }
+
+        if pages.count == 1 {
+            let newVC = WeatherViewController(isFromDeviceLocation: false, currentLocation: nil, timeZoneIdentifier: nil)
+            newVC.plusButton.addTarget(self, action: #selector(chooseLocation), for: .touchUpInside)
+            pages.append(newVC)
+            
+            currentIndex = (pages.count - 1)
+            if let lastVC = pages.last {
+                setViewControllers([lastVC], direction: .forward, animated: true, completion: nil)
+            }
+            
+            guard let locationToDelete = currentViewController.locationName else { return }
+            RealmService().deleteLocation(locationToDelete)
+            
+            pages.remove(at: 0)
+            title = "Add new location".localized
+        }
+        
+        guard let nextViewController = self.dataSource?.pageViewController( self, viewControllerAfter: currentViewController) else { return }
+
+        setViewControllers([nextViewController], direction: .forward, animated: true) {[self] isSet in
+            if isSet {
+                if let index = pages.firstIndex(of: nextViewController as! WeatherViewController) {
+                    currentIndex = index
+                    pageControl.currentPage = index
+                    self.title = pages[index].title
+                    
+                    for i in 0..<pages.count {
+                        if i == index - 1 {
+                            pageControl.setIndicatorImage(UIImage(systemName: "circle.fill"), forPage: i)
+                        } else {
+                            pageControl.setIndicatorImage(UIImage(systemName: "circle"), forPage: i)
+                        }
+                    }
+                    
+                    if index == 0 {
+                        if pages.count < 2 {
+                            print("Count of pages is less than 2")
+                        } else {
+                            pages.removeLast()
+                            pageControl.setIndicatorImage(UIImage(systemName: "circle.fill"), forPage: 0)
+                        }
+                    } else {
+                        pages.remove(at: (index - 1))
+                    }
+                    
+                    pageControl.numberOfPages = pages.count
+                    
+                    if pageControl.numberOfPages == 1 {
+                        pageControl.setIndicatorImage(UIImage(systemName: "circle.fill"), forPage: index)
+                    }
+                    
+                    guard let locationToDelete = currentViewController.locationName else { return }
+                    RealmService().deleteLocation(locationToDelete)
+                }
+            }
+        }
+    }
+}
+
+extension WeatherPageViewController: CLLocationManagerDelegate {
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        if locationManager.authorizationStatus == .authorizedWhenInUse || locationManager.authorizationStatus == .authorizedAlways {
+            for i in 0..<pages.count {
+                if pages[i].isEmpty {
+                    pages.remove(at: i)
+                }
+            }
+                        
+            do {
+                let realm = try Realm()
+                let objects = realm.objects(LocationObject.self)
+                if let ifFromDeviceLocationVC = objects.first(where: {$0.name == "Текущее местоположение" || $0.name == "Current location"}) {
+                    let newVC = WeatherViewController(isFromDeviceLocation: true, currentLocation: CLLocation(latitude: ifFromDeviceLocationVC.latitude, longitude: ifFromDeviceLocationVC.longitude), timeZoneIdentifier: ifFromDeviceLocationVC.timeZoneIdentifier)
+                    newVC.locationName = ifFromDeviceLocationVC.name
+                    pages.insert(newVC, at: 0)
+                } else {
+                    pages.insert(WeatherViewController(isFromDeviceLocation: true, currentLocation: nil, timeZoneIdentifier: nil), at: 0)
+                }
+            } catch {
+                pages = [WeatherViewController(isFromDeviceLocation: true, currentLocation: nil, timeZoneIdentifier: nil)]
+            }
+            
+            pageControl.numberOfPages = pages.count
+            
+            currentIndex = 0
+            if let firstVC = pages.first {
+                setViewControllers([firstVC], direction: .reverse, animated: false, completion: nil)
+                title = firstVC.title
+            }
+            
+            if pages.count > 1 {
+                for i in 1...(pages.count - 1) {
+                    pageControl.setIndicatorImage(UIImage(systemName: "circle"), forPage: (i))
+                }
             }
         }
     }

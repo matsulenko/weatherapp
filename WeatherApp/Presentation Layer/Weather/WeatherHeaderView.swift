@@ -12,33 +12,19 @@ import WeatherKit
 final class WeatherHeaderView: UIView {
     
     private var currentLocation: CLLocation
-        
+    
+    private var timeZoneIdentifier: String?
+    
     private var locationName: String
-    
-    private lazy var numberOfDays = 7
-    
+        
     var data24hoursMedium: [WeatherForecastHourly] = []
     
     lazy var mainInfo: WeatherMainInfoView = {
-        var view = WeatherMainInfoView(frame: .zero, currentLocation: currentLocation, locationName: locationName)
+        var view = WeatherMainInfoView(frame: .zero, currentLocation: currentLocation, locationName: locationName, timeZoneIdentifier: timeZoneIdentifier)
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.isUserInteractionEnabled = true
         
         return view
-    }()
-    
-    lazy var details24Hours: UIButton = {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.contentHorizontalAlignment = .right
-        button.setTitleColor(UIColor(named: "Text"), for: .normal)
-        button.titleLabel?.font = UIFont(name: "Rubik-Light_Regular", size: 16)
-        
-        let text = "Подробнее на 24 часа"
-        let attributedText = NSMutableAttributedString(string: text)
-        attributedText.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: NSRange(location: 0, length: text.count))
-        button.setAttributedTitle(attributedText, for: .normal)
-        
-        return button
     }()
     
     let collectionView: UICollectionView = {
@@ -61,36 +47,22 @@ final class WeatherHeaderView: UIView {
         return collectionView
     }()
     
-    lazy var numberOfDaysButton: UIButton = {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.contentHorizontalAlignment = .right
-        button.setTitleColor(UIColor(named: "Text"), for: .normal)
-        button.titleLabel?.font = UIFont(name: "Rubik-Light_Regular", size: 16)
-        
-        let text = "\(WeatherOptions.shared.numberOfDays) дней"
-        let attributedText = NSMutableAttributedString(string: text)
-        attributedText.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: NSRange(location: 0, length: text.count))
-        button.setAttributedTitle(attributedText, for: .normal)
-        
-        return button
-    }()
-    
     private lazy var tableTitle: UILabel = {
         var label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "Rubik-Light_Medium", size: 18)
         label.numberOfLines = 1
-        label.textAlignment = .left
+        label.textAlignment = .center
         label.textColor = UIColor(named: "Text")
-        label.text = "Ежедневный прогноз"
+        label.text = "Daily forecast".localized
         
         return label
     }()
     
-    init(frame: CGRect, currentLocation: CLLocation, locationName: String) {
+    init(frame: CGRect, currentLocation: CLLocation, locationName: String, timeZoneIdentifier: String?) {
         self.currentLocation = currentLocation
         self.locationName = locationName
+        self.timeZoneIdentifier = timeZoneIdentifier
         super.init(frame: frame)
         
         addSubviews()
@@ -104,15 +76,14 @@ final class WeatherHeaderView: UIView {
     
     private func addSubviews() {
         addSubview(mainInfo)
-        addSubview(details24Hours)
         addSubview(collectionView)
-        addSubview(numberOfDaysButton)
         addSubview(tableTitle)
     }
     
     public func updateCurrentLocation(location: CLLocation) {
         currentLocation = location
         mainInfo.currentLocation = location
+        mainInfo.timeZoneIdentifier = timeZoneIdentifier
     }
     
     private func setupView() {
@@ -128,38 +99,48 @@ final class WeatherHeaderView: UIView {
             mainInfo.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 40),
             mainInfo.heightAnchor.constraint(equalToConstant: 212),
             
-            details24Hours.topAnchor.constraint(equalTo: mainInfo.bottomAnchor, constant: 33),
-            details24Hours.trailingAnchor.constraint(equalTo: mainInfo.trailingAnchor),
-            
-            collectionView.topAnchor.constraint(equalTo: details24Hours.bottomAnchor, constant: 24),
+            collectionView.topAnchor.constraint(equalTo: mainInfo.bottomAnchor, constant: 15),
             collectionView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
             collectionView.heightAnchor.constraint(equalToConstant: 85),
             
-            numberOfDaysButton.topAnchor.constraint(equalTo: details24Hours.bottomAnchor, constant: 140),
-            numberOfDaysButton.trailingAnchor.constraint(equalTo: mainInfo.trailingAnchor),
+            tableTitle.topAnchor.constraint(equalTo: mainInfo.bottomAnchor, constant: 120),
+            tableTitle.centerXAnchor.constraint(equalTo: mainInfo.centerXAnchor),
             
-            tableTitle.centerYAnchor.constraint(equalTo: numberOfDaysButton.centerYAnchor),
-            tableTitle.leadingAnchor.constraint(equalTo: mainInfo.leadingAnchor),
-            
-            self.bottomAnchor.constraint(equalTo: numberOfDaysButton.bottomAnchor, constant: 9)
+            self.bottomAnchor.constraint(equalTo: tableTitle.bottomAnchor, constant: 9)
         ])
     }
     
     func reloadCollectionView() {
-        collectionView.reloadData()
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
     }
 }
 
 extension WeatherHeaderView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        data24hoursMedium.count
+        if data24hoursMedium.count < (24 + Date().getHours(Date(), timeZoneIdentifier: timeZoneIdentifier)) {
+            data24hoursMedium.count
+        } else {
+            24
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WeatherCollectionViewCell.id, for: indexPath) as! WeatherCollectionViewCell
+        cell.timeZoneIdentifier = timeZoneIdentifier
         
-        let hourData = data24hoursMedium[indexPath.row]
+        var offset: Int = 0
+        let zeroHour = data24hoursMedium[3].hours
+        
+        if zeroHour == 2 {
+            offset = 1
+        } else if zeroHour == 4 {
+            offset = -1
+        }
+        
+        let hourData = data24hoursMedium[indexPath.row + Date().getHours(Date(), timeZoneIdentifier: timeZoneIdentifier) + offset]
         cell.setup(with: hourData)
         
         return cell

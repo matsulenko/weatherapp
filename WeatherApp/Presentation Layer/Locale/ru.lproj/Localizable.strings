@@ -1,0 +1,85 @@
+/* 
+  Localizable.strings
+  WeatherApp
+
+  Created by Matsulenko on 15.11.2023.
+  
+*/
+
+"Allow Weather App to use your device location data" = "Разрешить приложению Weather использовать данные о местоположении вашего устройства";
+"to get an accurate weather forecast during your move or trip" = "Чтобы получить более точные прогнозы погоды во время движения или путешествия";
+"You can change your choice in your device settings at any time" = "Вы можете изменить свой выбор в любое время в настройках устройства";
+"Use your device location" = "Использовать местоположение устройства";
+"No, I will add locations myself" = "Нет, я буду добавлять локации";
+"Current location" = "Текущее местоположение";
+"Location name" = "Название города или локации";
+"Cancel" = "Отмена";
+"Ok" = "Ок";
+"Add new location" = "Добавить новую локацию";
+"Daily forecast" = "Ежедневный прогноз";
+"Delete" = "Удалить";
+"Loading" = "Идёт загрузка";
+"Back" = "Назад";
+"24 hours forecast" = "Прогноз на 24 часа";
+"Wind" = "Ветер";
+"Precipitation" = "Атмосферные осадки";
+"Cloudiness" = "Облачность";
+"Feels like" = "Ощущается как";
+"Settings" = "Настройки";
+"Temperature" = "Температура";
+"Wind speed" = "Скорость ветра";
+"Time format" = "Формат времени";
+"Save" = "Сохранить";
+"Updated now" = "Обновлено сейчас";
+"MPH" = "ми/ч";
+"m/s" = "м/с";
+"N" = "С";
+"NNE" = "ССВ";
+"NE" = "СВ";
+"ENE" = "ВСВ";
+"E" = "В";
+"ESE" = "ВЮВ";
+"SE" = "ЮВ";
+"SSE" = "ЮЮВ";
+"S" = "Ю";
+"SSW" = "ЮЮЗ";
+"SW" = "ЮЗ";
+"WSW" = "ЗЮЗ";
+"W" = "З";
+"WNW" = "ЗСЗ";
+"NW" = "СЗ";
+"NNW" = "ССЗ";
+"Blizzard" = "Метель";
+"Blowing dust" = "Песчаная буря";
+"Blowing snow" = "Снежная буря";
+"Breezy" = "Свежесть";
+"Clear" = "Ясно";
+"Cloudy" = "Облачно";
+"Drizzle" = "Моросящий дождь";
+"Flurries" = "Шквалы";
+"Foggy" = "Туман";
+"Freezing drizzle" = "Моросящий ледяной дождь";
+"Freezing rain" = "Ледяной дождь";
+"Frigid" = "Холод";
+"Hail" = "Град";
+"Haze" = "Лёгкий туман";
+"Heavy rain" = "Ливень";
+"Heavy snow" = "Снегопад";
+"Hot" = "Жара";
+"Hurricane" = "Ураган";
+"Isolated thunderstorms" = "Местами грозы";
+"Mostly clear" = "Преимущественно ясно";
+"Mostly cloudy" = "Преимущественно облачно";
+"Partly cloudy" = "Переменная облачность";
+"Rain" = "Дождь";
+"Scattered thunderstorms" = "Возможны грозы";
+"Sleet" = "Мокрый снег";
+"Smoky" = "Дымка";
+"Snow" = "Снег";
+"Strong storms" = "Сильные штормы";
+"Sun flurries" = "Солнечные шквалы";
+"Sun showers" = "Грибной дождь";
+"Thunderstorms" = "Гроза";
+"Tropical storm" = "Тропическая буря";
+"Windy" = "Ветрено";
+"Wintry mix" = "Дождь со снегом";
