@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BC065E522B0756A50002E6FD /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BC065E542B0756A50002E6FD /* InfoPlist.strings */; };
 		BC317A162AFD5A2C00CBC932 /* SkeletonView in Frameworks */ = {isa = PBXBuildFile; productRef = BC317A152AFD5A2C00CBC932 /* SkeletonView */; };
 		BC317A182AFD5C9500CBC932 /* WeatherLoad.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC317A172AFD5C9500CBC932 /* WeatherLoad.swift */; };
 		BC32C7B82AC609FC00AFB265 /* WeatherHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC32C7B72AC609FC00AFB265 /* WeatherHeaderView.swift */; };
@@ -67,6 +68,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		BC065E532B0756A50002E6FD /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		BC317A172AFD5C9500CBC932 /* WeatherLoad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherLoad.swift; sourceTree = "<group>"; };
 		BC32C7B72AC609FC00AFB265 /* WeatherHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherHeaderView.swift; sourceTree = "<group>"; };
 		BC32C7B92AC6132700AFB265 /* SemiCircleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemiCircleView.swift; sourceTree = "<group>"; };
@@ -230,6 +232,7 @@
 				BCA263692AC2168200E753FB /* Core Layer */,
 				BCA263652AC2156700E753FB /* Resources */,
 				BCA263522AC20D1900E753FB /* Info.plist */,
+				BC065E542B0756A50002E6FD /* InfoPlist.strings */,
 			);
 			path = WeatherApp;
 			sourceTree = "<group>";
@@ -412,6 +415,7 @@
 				BC51D1DF2B053B0900124769 /* Localizable.strings in Resources */,
 				BCA263512AC20D1900E753FB /* LaunchScreen.storyboard in Resources */,
 				BCA2634E2AC20D1900E753FB /* Assets.xcassets in Resources */,
+				BC065E522B0756A50002E6FD /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -464,6 +468,14 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
+		BC065E542B0756A50002E6FD /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BC065E532B0756A50002E6FD /* ru */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
 		BC51D1E12B053B0900124769 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -613,12 +625,13 @@
 				CODE_SIGN_ENTITLEMENTS = WeatherApp/WeatherApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 23;
+				CURRENT_PROJECT_VERSION = 26;
 				DEVELOPMENT_TEAM = ZK7BYU4ARD;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WeatherApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WeatherApp;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.weather";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Приложению нужен доступ к геолокации для показа прогноза погода в текущем местоположении";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "The application needs the location data of your device to show the weather forecast for your current location";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -649,12 +662,13 @@
 				CODE_SIGN_ENTITLEMENTS = WeatherApp/WeatherApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 23;
+				CURRENT_PROJECT_VERSION = 26;
 				DEVELOPMENT_TEAM = ZK7BYU4ARD;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WeatherApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WeatherApp;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.weather";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Приложению нужен доступ к геолокации для показа прогноза погода в текущем местоположении";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "The application needs the location data of your device to show the weather forecast for your current location";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;

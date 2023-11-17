@@ -1,0 +1,10 @@
+/* 
+  InfoPlist.strings
+  WeatherApp
+
+  Created by Matsulenko on 17.11.2023.
+  
+*/
+
+"CFBundleDisplayName" = "Погода у вас";
+"NSLocationWhenInUseUsageDescription" = "Приложению нужен доступ к геолокации для показа прогноза погода в текущем местоположении";
