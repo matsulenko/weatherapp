@@ -62,15 +62,19 @@ final class WeatherPageViewController: UIPageViewController {
         do {
             let realm = try Realm()
             let objects = realm.objects(LocationObject.self)
+            var currentLocationWasShown = false
             for i in objects{
                 if i.name == "Current location" || i.name == "Текущее местоположение" {
-                    if locationManager.authorizationStatus == .authorizedWhenInUse || locationManager.authorizationStatus == .authorizedAlways {
-                        let newVC = WeatherViewController(isFromDeviceLocation: true, currentLocation: CLLocation(latitude: i.latitude, longitude: i.longitude), timeZoneIdentifier: i.timeZoneIdentifier)
-                        newVC.locationName = i.name
-                        updatedPages.insert(newVC, at: 0)
-                    } else if objects.count == 1 {
-                        let newVC = WeatherViewController(isFromDeviceLocation: false, currentLocation: nil, timeZoneIdentifier: nil)
-                        updatedPages.append(newVC)
+                    if currentLocationWasShown == false {
+                        if locationManager.authorizationStatus == .authorizedWhenInUse || locationManager.authorizationStatus == .authorizedAlways {
+                            let newVC = WeatherViewController(isFromDeviceLocation: true, currentLocation: CLLocation(latitude: i.latitude, longitude: i.longitude), timeZoneIdentifier: i.timeZoneIdentifier)
+                            newVC.locationName = i.name
+                            updatedPages.insert(newVC, at: 0)
+                            currentLocationWasShown = true
+                        } else if objects.count == 1 {
+                            let newVC = WeatherViewController(isFromDeviceLocation: false, currentLocation: nil, timeZoneIdentifier: nil)
+                            updatedPages.append(newVC)
+                        }
                     }
                 } else {
                     let newVC = WeatherViewController(isFromDeviceLocation: false, currentLocation: CLLocation(latitude: i.latitude, longitude: i.longitude), timeZoneIdentifier: i.timeZoneIdentifier)
