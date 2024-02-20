@@ -54,4 +54,7 @@ iOS 16.0
 WeatherApp has English and Russian localizations
 
 # Developed by
-WeatherApp is developed by Andrey Matsulenko during the Netology Swift course in 2023.
+WeatherApp is developed by Andrey Matsulenko in 2023.
+
+# Contacts
+LinkedIn: https://linkedin.com/in/matsulenko/
